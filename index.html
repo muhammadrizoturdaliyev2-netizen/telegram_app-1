@@ -1,180 +1,50 @@
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bilimchi App</title>
+<div class="loader-page">
+  <div class="circle"></div>
+
+  <h1>Bilimchi app</h1>
+  <p>Tez orada yuklanadi...</p>
+</div>
 
 <style>
-body {margin:0;font-family:sans-serif;background:#0f172a;color:white;}
-header {padding:15px;text-align:center;background:#1e293b;font-size:20px;}
-.container {padding:15px;margin-bottom:60px;}
-.card {background:#1e293b;padding:15px;border-radius:12px;margin-bottom:10px;}
-button {width:100%;padding:12px;border:none;border-radius:10px;margin-top:10px;background:#22c55e;color:white;}
-.nav {position:fixed;bottom:0;width:100%;display:flex;background:#1e293b;}
-.nav div {flex:1;text-align:center;padding:10px;}
-.hidden {display:none;}
-.admin {background:#7c3aed;}
+body {
+  margin: 0;
+  background: #000; /* toza fon */
+  font-family: sans-serif;
+  color: white;
+}
+
+/* Center */
+.loader-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Animation */
+.circle {
+  width: 80px;
+  height: 80px;
+  border: 4px solid transparent;
+  border-top: 4px solid #00eaff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 30px;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+/* Text */
+h1 {
+  font-size: 22px;
+  margin: 0;
+}
+
+p {
+  opacity: 0.6;
+  margin-top: 5px;
+}
 </style>
-</head>
-
-<body>
-
-<header>🚀 Bilimchi LMS</header>
-
-<div class="container">
-
-<!-- HOME -->
-<div id="home">
-  <div class="card">
-    👤 <span id="username">User</span><br>
-    ⭐ XP: <span id="xp">0</span><br>
-    💎 Status: <span id="status">Free</span>
-  </div>
-
-  <div class="card">
-    📚 Kurslar
-    <button onclick="show('course')">Ochish</button>
-  </div>
-
-  <div class="card">
-    💳 Premium
-    <button onclick="show('payment')">Sotib olish</button>
-  </div>
-
-  <div class="card admin">
-    👑 Admin Panel
-    <button onclick="loadAdmin()">Ochish</button>
-  </div>
-</div>
-
-<!-- COURSE -->
-<div id="course" class="hidden">
-  <h2>📚 Kurslar</h2>
-  <div class="card">1-dars <button onclick="lesson()">Boshlash</button></div>
-  <div class="card" id="premiumLesson">2-dars 🔒 Premium</div>
-</div>
-
-<!-- LESSON -->
-<div id="lesson" class="hidden">
-  <h2>📘 Dars</h2>
-  <p>HTML web sayt yaratish uchun ishlatiladi</p>
-  <button onclick="finishLesson()">Tugatish</button>
-</div>
-
-<!-- PAYMENT -->
-<div id="payment" class="hidden">
-  <h2>💳 To‘lov</h2>
-  <p>Karta: 8600 1234 5678 9012</p>
-  <button onclick="sendPayment()">To‘ladim</button>
-  <p id="payStatus"></p>
-</div>
-
-<!-- ADMIN -->
-<div id="admin" class="hidden">
-  <h2>👑 Admin Panel</h2>
-  <div id="payments"></div>
-</div>
-
-</div>
-
-<div class="nav">
-  <div onclick="show('home')">🏠</div>
-  <div onclick="show('course')">📚</div>
-</div>
-
-<script>
-
-const BACKEND_URL = "https://nonhydrated-renna-renowned.ngrok-free.dev";
-
-// USER
-let username = "User";
-
-// TELEGRAM
-if(window.Telegram){
-  const tg = Telegram.WebApp;
-  tg.expand();
-  const user = tg.initDataUnsafe.user;
-  if(user){
-    username = user.first_name;
-    document.getElementById("username").innerText = username;
-  }
-}
-
-// DATA
-let xp = 0;
-let premium = false;
-
-// NAV
-function show(id){
-  document.querySelectorAll(".container > div").forEach(d=>d.classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
-}
-
-// LESSON
-function lesson(){
-  show('lesson');
-}
-
-function finishLesson(){
-  xp += 10;
-  updateUI();
-  alert("XP +10 🎉");
-}
-
-// PAYMENT SEND
-function sendPayment(){
-  fetch(BACKEND_URL + "/pay", {
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({ name: username })
-  });
-
-  document.getElementById("payStatus").innerText = "⏳ Kutilmoqda";
-}
-
-// ADMIN LOAD
-function loadAdmin(){
-  show('admin');
-
-  fetch(BACKEND_URL + "/payments")
-    .then(res => res.json())
-    .then(data => {
-      let html = "";
-      data.forEach((p,i)=>{
-        html += 
-        <div class="card">
-          ${p.name} - ${p.status}
-          <button onclick="approve(${i})">Approve</button>
-        </div>;
-      });
-      document.getElementById("payments").innerHTML = html;
-    });
-}
-
-// APPROVE
-function approve(i){
-  fetch(BACKEND_URL + "/approve", {
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({ index:i })
-  });
-
-  premium = true;
-  updateUI();
-}
-
-// UI
-function updateUI(){
-  document.getElementById("xp").innerText = xp;
-  document.getElementById("status").innerText = premium ? "Premium" : "Free";
-
-  if(premium){
-    document.getElementById("premiumLesson").innerHTML = "2-dars ✔️";
-  }
-}
-
-</script>
-
-</body>
-</html>
