@@ -49,7 +49,7 @@ body {
   padding-bottom: 30px;
 }
 
-/* MAIN PAGE */
+/* MAIN */
 .main {
   display: none;
 }
@@ -62,14 +62,28 @@ body {
   padding: 15px 18px;
 }
 
+.menu-btn {
+  font-size: 22px;
+  cursor: pointer;
+}
+
 .title {
   font-weight: 600;
   color: #a16207;
 }
 
-/* CARD */
+/* CONTENT */
 .container {
   padding: 20px;
+}
+
+.premium {
+  padding: 20px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #facc15, #f59e0b);
+  color: #78350f;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
 .card {
@@ -84,13 +98,13 @@ body {
   bottom: 15px;
   left: 50%;
   transform: translateX(-50%);
-  width: 90%;
-  max-width: 400px;
+  width: 95%;
+  max-width: 420px;
   background: white;
   border-radius: 25px;
   display: flex;
   justify-content: space-around;
-  padding: 10px 0;
+  padding: 15px 0;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
@@ -98,15 +112,48 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: 12px;
+  font-size: 20px;
   color: #94a3b8;
   cursor: pointer;
   transition: 0.3s;
 }
 
+.nav-item span {
+  font-size: 12px;
+  margin-top: 5px;
+}
+
 .nav-item.active {
   color: #3b82f6;
-  transform: translateY(-5px);
+  transform: translateY(-6px);
+}
+
+.premium-icon {
+  color: #f59e0b;
+}
+
+/* SIDEBAR MENU */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -260px;
+  width: 260px;
+  height: 100vh;
+  background: white;
+  box-shadow: 5px 0 20px rgba(0,0,0,0.1);
+  transition: 0.3s;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.sidebar.active {
+  left: 0;
+}
+
+.menu-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 15px;
 }
 </style>
 </head>
@@ -123,16 +170,31 @@ body {
   </div>
 </div>
 
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="menu-item">👤 Profil</div>
+  <div class="menu-item">📚 Mening kurslarim</div>
+  <div class="menu-item">💎 Premium</div>
+  <div class="menu-item">🎯 Vazifalar</div>
+  <div class="menu-item">🏆 Reyting</div>
+  <div class="menu-item">⚙️ Sozlamalar</div>
+  <div class="menu-item">📞 Yordam</div>
+</div>
+
 <!-- MAIN -->
 <div class="main" id="main">
 
   <div class="header">
-    <div>☰</div>
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
     <div class="title">ASOSIY OYNA</div>
     <div>🔔</div>
   </div>
 
   <div class="container">
+    <div class="premium">
+      ⭐ Premium oching — barcha kurslar ochiladi
+    </div>
+
     <div class="card"></div>
   </div>
 
@@ -140,19 +202,25 @@ body {
   <div class="bottom-nav">
     <div class="nav-item active">🏠<span>Asosiy</span></div>
     <div class="nav-item">📚<span>Kurslar</span></div>
+    <div class="nav-item">🎯<span>Vazifa</span></div>
     <div class="nav-item">🏆<span>Reyting</span></div>
-    <div class="nav-item">👤<span>Profil</span></div>
+    <div class="nav-item premium-icon">💎<span>Premium</span></div>
   </div>
 
 </div>
 
 <script>
 
-/* LOADER → MAIN */
+/* LOADER */
 setTimeout(() => {
   document.getElementById("loader").style.display = "none";
   document.getElementById("main").style.display = "block";
 }, 2500);
+
+/* MENU */
+function toggleMenu(){
+  document.getElementById("sidebar").classList.toggle("active");
+}
 
 </script>
 
