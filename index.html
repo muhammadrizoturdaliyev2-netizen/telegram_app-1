@@ -27,6 +27,7 @@ body {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  z-index: 999;
 }
 
 .img {
@@ -71,6 +72,11 @@ body {
   font-weight: bold;
 }
 
+.menu-btn {
+  font-size: 22px;
+  cursor: pointer;
+}
+
 /* CARD */
 .card {
   margin: 20px;
@@ -82,18 +88,46 @@ body {
 /* NAV */
 .nav {
   position: fixed;
-  bottom: 0;
-  width: 100%;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 92%;
   background: white;
+  border-radius: 25px;
   display: flex;
-  justify-content: space-around;
-  padding: 8px 0;
-  border-top: 1px solid #eee;
+  justify-content: space-between;
+  padding: 10px 8px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
 }
 
 .item {
+  flex: 1;
   text-align: center;
-  font-size: 14px;
+  font-size: 18px;
+  color: #64748b;
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -260px;
+  width: 260px;
+  height: 100%;
+  background: white;
+  box-shadow: 5px 0 20px rgba(0,0,0,0.1);
+  transition: 0.3s;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.sidebar.active {
+  left: 0;
+}
+
+.menu-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
 }
 </style>
 </head>
@@ -110,17 +144,29 @@ body {
   </div>
 </div>
 
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="menu-item">👤 Profil</div>
+  <div class="menu-item">📚 Mening kurslarim</div>
+  <div class="menu-item">💎 Premium</div>
+  <div class="menu-item">🎯 Vazifalar</div>
+  <div class="menu-item">🏆 Reyting</div>
+  <div class="menu-item">⚙️ Sozlamalar</div>
+  <div class="menu-item">📞 Yordam</div>
+</div>
+
 <!-- MAIN -->
 <div class="main" id="main">
 
   <div class="header">
-    <div>☰</div>
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
     <div class="title">ASOSIY OYNA</div>
     <div>🔔</div>
   </div>
 
   <div class="card"></div>
 
+  <!-- NAV -->
   <div class="nav">
     <div class="item">🏠</div>
     <div class="item">📚</div>
@@ -132,10 +178,18 @@ body {
 </div>
 
 <script>
+
+/* LOADER */
 setTimeout(() => {
   document.getElementById("loader").style.display = "none";
   document.getElementById("main").style.display = "block";
 }, 2000);
+
+/* MENU */
+function toggleMenu(){
+  document.getElementById("sidebar").classList.toggle("active");
+}
+
 </script>
 
 </body>
