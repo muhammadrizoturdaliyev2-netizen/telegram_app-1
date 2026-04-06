@@ -49,6 +49,23 @@ body{
   border-radius:15px;
   background:#e2e8f0;
 }
+
+/* SIDEBAR */
+.sidebar{
+  position:fixed;
+  top:0;
+  left:-260px;
+  width:260px;
+  height:100%;
+  background:white;
+  box-shadow:5px 0 20px rgba(0,0,0,0.1);
+  transition:0.3s;
+  padding:20px;
+}
+
+.sidebar.active{
+  left:0;
+}
 </style>
 </head>
 
@@ -59,11 +76,16 @@ body{
   Yuklanmoqda...
 </div>
 
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  MENU
+</div>
+
 <!-- MAIN -->
 <div class="main" id="main">
 
   <div class="header">
-    <div>☰</div>
+    <div onclick="toggleMenu()">☰</div>
     <div class="title">ASOSIY OYNA</div>
     <div>🔔</div>
   </div>
@@ -73,10 +95,18 @@ body{
 </div>
 
 <script>
+
+/* LOADER */
 setTimeout(function(){
   document.getElementById("loader").style.display = "none";
   document.getElementById("main").style.display = "block";
 },1500);
+
+/* MENU */
+function toggleMenu(){
+  document.getElementById("sidebar").classList.toggle("active");
+}
+
 </script>
 
 </body>
