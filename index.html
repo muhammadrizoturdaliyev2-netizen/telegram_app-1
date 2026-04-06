@@ -28,10 +28,36 @@ body{
   height:100vh;
   background:#f8fafc;
   display:flex;
+  flex-direction:column;
+  justify-content:space-between;
   align-items:center;
-  justify-content:center;
-  font-size:20px;
   z-index:999;
+}
+
+/* RASM */
+.loader-img{
+  width:100%;
+  height:65%;
+  background:url('loading.jpg') center/cover no-repeat;
+}
+
+/* SPINNER */
+.circle{
+  width:40px;
+  height:40px;
+  border:4px solid #ddd;
+  border-top:4px solid #3b82f6;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  100%{transform:rotate(360deg)}
+}
+
+.text{
+  text-align:center;
+  padding-bottom:20px;
 }
 
 /* MAIN */
@@ -39,7 +65,7 @@ body{
   display:none;
   width:100vw;
   min-height:100vh;
-  padding-bottom:100px; /* nav uchun joy */
+  padding-bottom:100px;
 }
 
 /* HEADER */
@@ -53,7 +79,6 @@ body{
 .title{
   color:#a16207;
   font-weight:bold;
-  font-size:18px;
 }
 
 /* CARD */
@@ -98,7 +123,7 @@ body{
   display:block;
 }
 
-/* 🔥 PREMIUM NAV */
+/* NAV */
 .nav{
   position:fixed;
   bottom:15px;
@@ -111,7 +136,6 @@ body{
   justify-content:space-around;
   padding:14px 10px;
   box-shadow:0 10px 30px rgba(0,0,0,0.12);
-  z-index:800;
 }
 
 .item{
@@ -128,7 +152,14 @@ body{
 
 <!-- LOADER -->
 <div class="loader" id="loader">
-  Yuklanmoqda...
+  <div class="loader-img"></div>
+
+  <div class="circle"></div>
+
+  <div class="text">
+    <h2>Bilimchi app</h2>
+    <p>Yuklanmoqda...</p>
+  </div>
 </div>
 
 <!-- OVERLAY -->
@@ -150,7 +181,6 @@ body{
 
   <div class="card"></div>
 
-  <!-- 🔥 PREMIUM NAV -->
   <div class="nav">
     <div class="item">🏠</div>
     <div class="item">📚</div>
@@ -163,13 +193,11 @@ body{
 
 <script>
 
-/* LOADER */
 setTimeout(function(){
   document.getElementById("loader").style.display = "none";
   document.getElementById("main").style.display = "block";
 },1500);
 
-/* MENU */
 function toggleMenu(){
   document.getElementById("sidebar").classList.toggle("active");
   document.getElementById("overlay").classList.toggle("active");
