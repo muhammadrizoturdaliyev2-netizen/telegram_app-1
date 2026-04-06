@@ -1,4 +1,4 @@
-[06.04.2026 21:13] Turdaliyev.mmv: <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
@@ -6,35 +6,39 @@
 <title>Bilimchi</title>
 
 <style>
-body {
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
   font-family: sans-serif;
   background: #f8fafc;
 }
 
 /* LOADER */
-.loader-page {
+.loader {
   position: fixed;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   background: #f8fafc;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  z-index: 999;
 }
 
-.img-box {
+.img {
   width: 100%;
-  height: 75vh;
+  height: 65%;
   background: url('loading.jpg') center/cover no-repeat;
 }
 
-.loader-circle {
-  width: 45px;
-  height: 45px;
-  border: 4px solid #e2e8f0;
+.circle {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ddd;
   border-top: 4px solid #3b82f6;
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -44,118 +48,52 @@ body {
   100% { transform: rotate(360deg); }
 }
 
-.loader-text {
+.text {
   text-align: center;
-  padding-bottom: 25px;
+  padding-bottom: 20px;
 }
 
 /* MAIN */
 .main {
   display: none;
+  width: 100%;
 }
 
 /* HEADER */
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 15px 18px;
-}
-
-.menu-btn {
-  font-size: 22px;
-  cursor: pointer;
+  padding: 15px;
 }
 
 .title {
-  font-weight: 600;
   color: #a16207;
-}
-
-/* CONTENT */
-.container {
-  padding: 20px;
-}
-
-.premium {
-  padding: 18px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #facc15, #f59e0b);
-  color: #78350f;
   font-weight: bold;
-  margin-bottom: 20px;
 }
 
+/* CARD */
 .card {
+  margin: 20px;
   height: 120px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #e2e8f0, #cbd5f5);
+  border-radius: 15px;
+  background: #e2e8f0;
 }
 
-/* NAV (TO‘G‘RILANGAN) */
-.bottom-nav {
+/* NAV */
+.nav {
   position: fixed;
-  bottom: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 92%;
-  max-width: 420px;
+  bottom: 0;
+  width: 100%;
   background: white;
-  border-radius: 22px;
   display: flex;
-  justify-content: space-between;
-  padding: 8px 10px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  justify-content: space-around;
+  padding: 8px 0;
+  border-top: 1px solid #eee;
 }
 
-.nav-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: #94a3b8;
-  cursor: pointer;
-  transition: 0.25s;
-}
-
-/* ICON */
-.nav-item i {
-  font-size: 18px;
-}
-
-/* TEXT */
-.nav-item span {
-  font-size: 10px;
-  margin-top: 2px;
-}
-
-/* ACTIVE */
-.nav-item.active {
-  color: #3b82f6;
-  transform: translateY(-3px);
-}
-
-/* SIDEBAR */
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: -260px;
-  width: 260px;
-  height: 100vh;
-  background: white;
-  box-shadow: 5px 0 20px rgba(0,0,0,0.1);
-  transition: 0.3s;
-  padding: 20px;
-  z-index: 1000;
-}
-
-.sidebar.active {
-  left: 0;
-}
-
-.menu-item {
-  padding: 12px 0;
-  border-bottom: 1px solid #eee;
+.item {
+  text-align: center;
+  font-size: 14px;
 }
 </style>
 </head>
@@ -163,79 +101,41 @@ body {
 <body>
 
 <!-- LOADER -->
-<div class="loader-page" id="loader">
-  <div class="img-box"></div>
-  <div class="loader-circle"></div>
-  <div class="loader-text">
-    <h1>Bilimchi app</h1>
-    <p>Tez orada yuklanadi...</p>
+<div class="loader" id="loader">
+  <div class="img"></div>
+  <div class="circle"></div>
+  <div class="text">
+    <h2>Bilimchi app</h2>
+    <p>Yuklanmoqda...</p>
   </div>
-</div>
-
-<!-- SIDEBAR -->
-<div class="sidebar" id="sidebar">
-  <div class="menu-item">👤 Profil</div>
-  <div class="menu-item">📚 Mening kurslarim</div>
-  <div class="menu-item">💎 Premium</div>
-  <div class="menu-item">🎯 Vazifalar</div>
-  <div class="menu-item">🏆 Reyting</div>
-  <div class="menu-item">⚙️ Sozlamalar</div>
-  <div class="menu-item">📞 Yordam</div>
 </div>
 
 <!-- MAIN -->
 <div class="main" id="main">
 
   <div class="header">
-    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+    <div>☰</div>
     <div class="title">ASOSIY OYNA</div>
     <div>🔔</div>
   </div>
 
-  <div class="container">
-    <div class="premium">
-      ⭐ Premium oching — barcha kurslar ochiladi
-    </div>
+  <div class="card"></div>
 
-    <div class="card"></div>
-  </div>
-
-  <!-- NAV -->
-  <div class="bottom-nav">
-    <div class="nav-item active">
-      <i>🏠</i>
-      <span>Asosiy</span>
-    </div>
-    <div class="nav-item">
-      <i>📚</i>
-      <span>Kurslar</span>
-    </div>
-    <div class="nav-item">
-      <i>🎯</i>
-      <span>Vazifa</span>
-    </div>
-    <div class="nav-item">
-      <i>🏆</i>
-      <span>Reyting</span>
-    </div>
-    <div class="nav-item">
-      <i>💎</i>
-      <span>Premium</span>
-    </div>
+  <div class="nav">
+    <div class="item">🏠</div>
+    <div class="item">📚</div>
+    <div class="item">🎯</div>
+    <div class="item">🏆</div>
+    <div class="item">💎</div>
   </div>
 
 </div>
 
 <script>
-
 setTimeout(() => {
   document.getElementById("loader").style.display = "none";
   document.getElementById("main").style.display = "block";
 }, 2000);
-[06.04.2026 21:13] Turdaliyev.mmv: function toggleMenu(){
-  document.getElementById("sidebar").classList.toggle("active");
-}
-
 </script>
 
 </body>
