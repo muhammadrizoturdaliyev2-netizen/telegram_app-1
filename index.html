@@ -1,9 +1,12 @@
-<!DOCTYPE html>
+[06.04.2026 21:38] Turdaliyev.mmv: <!DOCTYPE html>
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bilimchi</title>
+
+<!-- Telegram API -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -118,7 +121,7 @@ body{
   left:0;
 }
 
-/* USER BLOCK */
+/* USER */
 .user{
   display:flex;
   align-items:center;
@@ -178,13 +181,11 @@ body{
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
 
-  <!-- USER -->
   <div class="user">
-    <img src="https://i.pravatar.cc/100">
-    <div class="user-name">@username</div>
+    <img id="userPhoto" src="">
+    <div class="user-name" id="userName">...</div>
   </div>
 
-  <!-- MENU -->
   <div class="menu-item">📚 Mening kurslarim</div>
   <div class="menu-item">💎 Premium</div>
   <div class="menu-item">🎯 Vazifalar</div>
@@ -206,7 +207,6 @@ body{
 
   <div class="card"></div>
 
-  <!-- NAV -->
   <div class="nav">
     <div class="item">🏠</div>
     <div class="item">📚</div>
@@ -219,13 +219,25 @@ body{
 
 <script>
 
-/* LOADER */
+const tg = window.Telegram.WebApp;
+tg.ready();
+
+const user = tg.initDataUnsafe.user;
+
+if(user){
+  document.getElementById("userName").innerText =
+    user.username ? "@"+user.username : user.first_name;
+
+  document.getElementById("userPhoto").src =
+    user.photo_url ? user.photo_url : "https://i.pravatar.cc/100";
+}
+
+/* LOADER ENDI TO‘G‘RI */
 setTimeout(()=>{
   document.getElementById("loader").style.display="none";
   document.getElementById("main").style.display="block";
-},2000);
-
-/* MENU */
+},1500);
+[06.04.2026 21:38] Turdaliyev.mmv: /* MENU */
 function toggleMenu(){
   document.getElementById("sidebar").classList.toggle("active");
   document.getElementById("overlay").classList.toggle("active");
