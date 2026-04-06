@@ -3,15 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Test</title>
+<title>Bilimchi</title>
 
 <style>
 body{
   margin:0;
   font-family:sans-serif;
+  background:#f8fafc;
 }
 
-/* loader */
+/* LOADER */
 .loader{
   position:fixed;
   width:100%;
@@ -23,40 +24,58 @@ body{
   font-size:20px;
 }
 
-<div class="main" id="main">
+/* MAIN */
+.main{
+  display:none;
+  height:100vh;
+}
 
-  <div style="display:flex;justify-content:space-between;padding:15px;">
-    <div>☰</div>
-    <div style="color:#a16207;font-weight:bold;">ASOSIY OYNA</div>
-    <div>🔔</div>
-  </div>
+/* HEADER */
+.header{
+  display:flex;
+  justify-content:space-between;
+  padding:15px;
+}
 
-  <div style="
-    margin:20px;
-    height:120px;
-    border-radius:15px;
-    background:#e2e8f0;
-  "></div>
+.title{
+  color:#a16207;
+  font-weight:bold;
+}
 
-</div>
+/* CARD */
+.card{
+  margin:20px;
+  height:120px;
+  border-radius:15px;
+  background:#e2e8f0;
 }
 </style>
 </head>
 
 <body>
 
+<!-- LOADER -->
 <div class="loader" id="loader">
   Yuklanmoqda...
 </div>
 
+<!-- MAIN -->
 <div class="main" id="main">
-  ASOSIY SAHIFA
+
+  <div class="header">
+    <div>☰</div>
+    <div class="title">ASOSIY OYNA</div>
+    <div>🔔</div>
+  </div>
+
+  <div class="card"></div>
+
 </div>
 
 <script>
 setTimeout(function(){
   document.getElementById("loader").style.display = "none";
-  document.getElementById("main").style.display = "flex";
+  document.getElementById("main").style.display = "block";
 },1500);
 </script>
 
