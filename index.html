@@ -120,7 +120,7 @@ body{
 }
 .overlay.active{display:block}
 
-/* 🔥 SOFT CARD */
+/* CARD */
 .card{
   margin:20px;
   padding:20px;
@@ -186,7 +186,7 @@ body{
   <div class="circle"></div>
   <div class="text">
     <h3>Bilimchi</h3>
-    <p>Yuklanmoqda...</p>
+    <p>Iltimos, biroz kuting 😊</p>
   </div>
 </div>
 
@@ -215,11 +215,11 @@ body{
     <div>🔔</div>
   </div>
 
-  <!-- SOFT TOP CARD -->
+  <!-- TOP CARD -->
   <div class="card top-card">
     <h3>Bugun nimani o‘rganamiz? 😊</h3>
     <p style="margin-top:5px;color:#6b7280;">
-      Ozgina vaqt ajratib bilim qo‘shamiz
+      Iltimos, o‘zingizga mos bo‘limni tanlang
     </p>
   </div>
 
@@ -232,14 +232,13 @@ body{
 
   <!-- PROGRESS -->
   <div class="card">
-    🔥 5 kun ketma-ket harakat qilyapsan!
+    🔥 Juda yaxshi! Siz o‘rganishni davom ettiryapsiz
   </div>
 
   <!-- PREMIUM -->
   <div class="card premium">
-    💎 Premium och va ko‘proq imkoniyatlarga ega bo‘l
-  </div>
-  <!-- NAV -->
+    💎 Premium orqali barcha imkoniyatlardan foydalanishingiz mumkin
+  </div><!-- NAV -->
   <div class="nav">
     <div class="item">🏠</div>
     <div class="item">📚</div>
@@ -251,11 +250,16 @@ body{
 </div>
 
 <script>
-setTimeout(()=>{
-  document.getElementById("loader").style.display="none";
-  document.getElementById("main").style.display="block";
-},1500);
 
+/* LOADER (3 SONIYA) */
+window.onload = function(){
+  setTimeout(()=>{
+    document.getElementById("loader").style.display="none";
+    document.getElementById("main").style.display="block";
+  },3000);
+}
+
+/* MENU */
 function toggleMenu(){
   document.getElementById("sidebar").classList.toggle("active");
   document.getElementById("overlay").classList.toggle("active");
@@ -265,6 +269,7 @@ function closeMenu(){
   document.getElementById("sidebar").classList.remove("active");
   document.getElementById("overlay").classList.remove("active");
 }
+
 </script>
 
 </body>
