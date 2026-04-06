@@ -2,142 +2,1659 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bilimchi LMS</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>O'quv Platformasi</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-body {
-  margin:0;
-  font-family: Arial;
-  background:#0f172a;
-  color:white;
-}
+  :root {
+    --primary: #6C5CE7;
+    --primary-light: #a29bfe;
+    --primary-dark: #4834d4;
+    --accent: #00cec9;
+    --accent2: #fd79a8;
+    --gold: #fdcb6e;
+    --success: #00b894;
+    --danger: #e17055;
+    --bg: #0f0e17;
+    --bg2: #1a1928;
+    --bg3: #252438;
+    --card: #1e1d2e;
+    --card2: #252438;
+    --border: rgba(255,255,255,0.08);
+    --text: #fffffe;
+    --text2: #a7a9be;
+    --text3: #6c6f8a;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --radius-xs: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.5;
+    overflow: hidden;
+  }
 
-header {
-  padding:15px;
-  background:#1e293b;
-  text-align:center;
-  font-size:20px;
-  font-weight:bold;
-}
+  /* ── Scrollable wrapper ── */
+  #app { height: 100vh; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; }
+  #app::-webkit-scrollbar { display: none; }
 
-.container {
-  padding:15px;
-}
+  /* ── Screens ── */
+  .screen { display: none; min-height: 100vh; padding-bottom: 80px; }
+  .screen.active { display: block; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
-.card {
-  background:#1e293b;
-  padding:15px;
-  border-radius:15px;
-  margin-bottom:15px;
-}
+  /* ── Bottom Nav ── */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    padding: 10px 4px 8px; gap: 4px; cursor: pointer; transition: all 0.2s;
+    color: var(--text3); font-size: 11px; border: none; background: none;
+  }
+  .nav-item svg { width: 22px; height: 22px; transition: all 0.2s; }
+  .nav-item.active { color: var(--primary-light); }
+  .nav-item.active svg { transform: scale(1.1); }
 
-button {
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:10px;
-  background:#22c55e;
-  color:white;
-  font-size:16px;
-  margin-top:10px;
-}
+  /* ── Top Header ── */
+  .top-header {
+    padding: 16px 20px 12px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; background: var(--bg); z-index: 50;
+    border-bottom: 1px solid var(--border);
+  }
+  .top-header h1 { font-size: 20px; font-weight: 700; }
+  .badge-premium {
+    background: linear-gradient(135deg, var(--primary), var(--accent2));
+    color: #fff; font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 20px; letter-spacing: 0.3px;
+  }
+  .badge-free {
+    background: var(--bg3); color: var(--text2); font-size: 11px;
+    padding: 4px 10px; border-radius: 20px;
+  }
 
-.progress {
-  height:10px;
-  background:#334155;
-  border-radius:10px;
-  overflow:hidden;
-  margin-top:10px;
-}
+  /* ── Hero ── */
+  .hero {
+    margin: 20px 16px 0;
+    background: linear-gradient(135deg, #2d1b69 0%, #1a1640 50%, #0d1f3c 100%);
+    border-radius: var(--radius);
+    padding: 24px 20px;
+    position: relative; overflow: hidden;
+    border: 1px solid rgba(108,92,231,0.3);
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -40px; right: -40px;
+    width: 160px; height: 160px;
+    background: radial-gradient(circle, rgba(108,92,231,0.3) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero-greeting { font-size: 13px; color: var(--primary-light); margin-bottom: 6px; font-weight: 500; }
+  .hero-name { font-size: 24px; font-weight: 700; margin-bottom: 12px; }
+  .hero-stats { display: flex; gap: 16px; }
+  .hero-stat { text-align: center; }
+  .hero-stat-num { font-size: 20px; font-weight: 700; color: var(--gold); }
+  .hero-stat-label { font-size: 11px; color: var(--text2); margin-top: 2px; }
 
-.progress-bar {
-  height:100%;
-  background:#22c55e;
-  width:30%;
-}
+  /* ── Section ── */
+  .section { padding: 20px 16px 0; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .section-title { font-size: 17px; font-weight: 700; }
+  .see-all { font-size: 13px; color: var(--primary-light); cursor: pointer; }
 
-.lesson {
-  display:none;
-}
+  /* ── Course Cards ── */
+  .course-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 16px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .course-card:active { transform: scale(0.98); opacity: 0.9; }
+  .course-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .course-card.c1::before { background: linear-gradient(90deg, var(--primary), var(--accent)); }
+  .course-card.c2::before { background: linear-gradient(90deg, var(--accent2), var(--gold)); }
+  .course-card.c3::before { background: linear-gradient(90deg, var(--success), var(--accent)); }
+  .course-card.c4::before { background: linear-gradient(90deg, var(--gold), var(--danger)); }
+  .course-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+  .course-icon { width: 44px; height: 44px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .course-icon.ci1 { background: rgba(108,92,231,0.2); }
+  .course-icon.ci2 { background: rgba(253,121,168,0.2); }
+  .course-icon.ci3 { background: rgba(0,184,148,0.2); }
+  .course-icon.ci4 { background: rgba(253,203,110,0.2); }
+  .course-meta { text-align: right; }
+  .course-lessons-count { font-size: 12px; color: var(--text2); }
+  .lock-badge { background: rgba(255,255,255,0.08); border-radius: 6px; padding: 3px 8px; font-size: 11px; color: var(--text2); display: inline-flex; align-items: center; gap: 4px; }
+  .course-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .course-desc { font-size: 13px; color: var(--text2); margin-bottom: 14px; line-height: 1.4; }
+  .progress-bar { background: rgba(255,255,255,0.08); border-radius: 4px; height: 6px; overflow: hidden; margin-bottom: 6px; }
+  .progress-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+  .pf-1 { background: linear-gradient(90deg, var(--primary), var(--accent)); }
+  .pf-2 { background: linear-gradient(90deg, var(--accent2), var(--gold)); }
+  .pf-3 { background: linear-gradient(90deg, var(--success), var(--accent)); }
+  .pf-4 { background: linear-gradient(90deg, var(--gold), var(--danger)); }
+  .progress-text { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); }
 
-.back {
-  background:#ef4444;
-}
+  /* ── Quick Actions ── */
+  .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .qa-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 12px;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; flex-direction: column; gap: 8px;
+    text-align: left;
+  }
+  .qa-btn:active { transform: scale(0.97); }
+  .qa-icon { font-size: 22px; }
+  .qa-label { font-size: 13px; font-weight: 600; color: var(--text); }
+  .qa-sub { font-size: 11px; color: var(--text3); }
+
+  /* ── Lesson Screen ── */
+  .back-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: none; border: none; color: var(--primary-light);
+    font-size: 15px; cursor: pointer; padding: 0;
+  }
+  .lesson-list { padding: 0 16px; }
+  .lesson-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px; background: var(--card);
+    border-radius: var(--radius-sm); margin-bottom: 8px;
+    cursor: pointer; transition: all 0.2s;
+    border: 1px solid var(--border);
+  }
+  .lesson-item:active { transform: scale(0.98); }
+  .lesson-item.locked { opacity: 0.5; cursor: not-allowed; }
+  .lesson-num {
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+  }
+  .ln-done { background: rgba(0,184,148,0.2); color: var(--success); }
+  .ln-active { background: rgba(108,92,231,0.2); color: var(--primary-light); }
+  .ln-locked { background: rgba(255,255,255,0.05); color: var(--text3); }
+  .lesson-info { flex: 1; }
+  .lesson-title-sm { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .lesson-meta-sm { font-size: 12px; color: var(--text3); }
+  .lesson-status-icon { font-size: 16px; }
+
+  /* ── Lesson Detail ── */
+  .lesson-detail-header {
+    padding: 20px 16px;
+    background: linear-gradient(135deg, #1e1d2e 0%, #252438 100%);
+    border-bottom: 1px solid var(--border);
+  }
+  .lesson-num-badge {
+    font-size: 11px; color: var(--primary-light); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
+  }
+  .lesson-main-title { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+  .lesson-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tag {
+    padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .tag-video { background: rgba(108,92,231,0.2); color: var(--primary-light); }
+  .tag-test { background: rgba(0,206,201,0.2); color: var(--accent); }
+  .tag-vocab { background: rgba(253,203,110,0.2); color: var(--gold); }
+  .tag-done { background: rgba(0,184,148,0.2); color: var(--success); }
+
+  .video-player {
+    margin: 16px; border-radius: var(--radius);
+    background: #000; overflow: hidden;
+    border: 1px solid var(--border);
+    aspect-ratio: 16/9;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; position: relative;
+  }
+  .video-thumb {
+    width: 100%; height: 100%; object-fit: cover;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #1a1640 0%, #0d1f3c 100%);
+    flex-direction: column; gap: 10px;
+  }
+  .play-btn {
+    width: 60px; height: 60px; border-radius: 50%;
+    background: rgba(108,92,231,0.9);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .play-btn svg { width: 24px; height: 24px; fill: #fff; margin-left: 3px; }
+  .video-label { font-size: 13px; color: var(--text2); }
+
+  .content-block { padding: 0 16px 16px; }
+  .content-title { font-size: 15px; font-weight: 700; margin-bottom: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px; }
+
+  /* ── Action Buttons ── */
+  .action-btn {
+    width: 100%; padding: 16px; border-radius: var(--radius);
+    font-size: 15px; font-weight: 700; cursor: pointer;
+    transition: all 0.2s; border: none;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-bottom: 10px; letter-spacing: 0.3px;
+  }
+  .action-btn:active { transform: scale(0.97); }
+  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; }
+  .btn-accent { background: linear-gradient(135deg, var(--accent), #00a8a3); color: #fff; }
+  .btn-gold { background: linear-gradient(135deg, var(--gold), #e17055); color: #fff; }
+  .btn-ghost { background: var(--bg3); color: var(--text); border: 1px solid var(--border); }
+  .btn-danger { background: rgba(225,112,85,0.15); color: var(--danger); border: 1px solid rgba(225,112,85,0.3); }
+
+  /* ── Test Screen ── */
+  .test-header { padding: 16px 20px; }
+  .test-progress-bar { height: 4px; background: var(--bg3); border-radius: 2px; margin-bottom: 16px; }
+  .test-progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 2px; transition: width 0.4s ease; }
+  .test-info-row { display: flex; justify-content: space-between; align-items: center; }
+  .test-counter { font-size: 13px; color: var(--text2); }
+  .test-timer { font-size: 20px; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
+
+  .question-card {
+    margin: 0 16px 20px;
+    background: var(--card); border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 20px;
+  }
+  .question-text { font-size: 17px; font-weight: 600; line-height: 1.5; }
+
+  .options-list { padding: 0 16px; }
+  .option-btn {
+    width: 100%; padding: 16px 18px; border-radius: var(--radius-sm);
+    background: var(--card); border: 1.5px solid var(--border);
+    color: var(--text); font-size: 15px; text-align: left;
+    cursor: pointer; transition: all 0.18s;
+    margin-bottom: 10px; display: flex; align-items: center; gap: 12px;
+  }
+  .option-btn:active { transform: scale(0.98); }
+  .option-letter {
+    width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; flex-shrink: 0;
+    transition: all 0.18s;
+  }
+  .option-btn.correct { border-color: var(--success); background: rgba(0,184,148,0.1); }
+  .option-btn.correct .option-letter { background: var(--success); border-color: var(--success); color: #fff; }
+  .option-btn.wrong { border-color: var(--danger); background: rgba(225,112,85,0.1); }
+  .option-btn.wrong .option-letter { background: var(--danger); border-color: var(--danger); color: #fff; }
+  .option-btn.selected { border-color: var(--primary); background: rgba(108,92,231,0.1); }
+  .option-btn.selected .option-letter { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+  /* ── Result Screen ── */
+  .result-circle {
+    width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 20px;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; position: relative;
+  }
+  .result-circle svg { position: absolute; top: 0; left: 0; }
+  .result-pct { font-size: 28px; font-weight: 700; position: relative; z-index: 1; }
+  .result-label { font-size: 12px; color: var(--text2); position: relative; z-index: 1; }
+
+  /* ── AI Screen ── */
+  .ai-chat { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+  .chat-bubble {
+    max-width: 85%; padding: 12px 16px; border-radius: var(--radius);
+    font-size: 14px; line-height: 1.6;
+  }
+  .chat-bubble.bot {
+    background: var(--card2); border: 1px solid var(--border);
+    border-bottom-left-radius: 4px;
+    align-self: flex-start;
+  }
+  .chat-bubble.user {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff; border-bottom-right-radius: 4px;
+    align-self: flex-end;
+  }
+  .ai-input-row {
+    position: fixed; bottom: 68px; left: 0; right: 0;
+    padding: 10px 16px 10px;
+    background: var(--bg2); border-top: 1px solid var(--border);
+    display: flex; gap: 10px; align-items: flex-end;
+    z-index: 90;
+  }
+  .ai-input {
+    flex: 1; background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px 16px;
+    color: var(--text); font-size: 14px; resize: none; outline: none;
+    font-family: inherit; max-height: 100px;
+  }
+  .ai-send-btn {
+    width: 44px; height: 44px; border-radius: var(--radius-xs);
+    background: var(--primary); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; flex-shrink: 0;
+  }
+  .ai-send-btn:active { transform: scale(0.95); }
+  .ai-send-btn svg { width: 18px; height: 18px; fill: #fff; }
+
+  .ai-modes { display: flex; gap: 8px; padding: 12px 16px 0; overflow-x: auto; }
+  .ai-modes::-webkit-scrollbar { display: none; }
+  .ai-mode-chip {
+    padding: 8px 14px; border-radius: 20px; font-size: 13px;
+    white-space: nowrap; cursor: pointer; transition: all 0.2s;
+    border: 1px solid var(--border); background: var(--card);
+    color: var(--text2); flex-shrink: 0;
+  }
+  .ai-mode-chip.active { background: rgba(108,92,231,0.2); border-color: var(--primary); color: var(--primary-light); }
+
+  .typing-indicator { display: flex; gap: 5px; align-items: center; padding: 12px 16px; }
+  .typing-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--text3); animation: bounce 1.2s infinite;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%,60%,100% { transform: none; } 30% { transform: translateY(-6px); } }
+
+  /* ── Profile Screen ── */
+  .profile-hero {
+    padding: 24px 16px 20px;
+    background: linear-gradient(135deg, #1e1d2e 0%, #252438 100%);
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+  .avatar {
+    width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 12px;
+    background: linear-gradient(135deg, var(--primary), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 700; color: #fff;
+    border: 3px solid rgba(255,255,255,0.15);
+  }
+  .profile-name { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .profile-plan { font-size: 13px; color: var(--text2); margin-bottom: 16px; }
+  .profile-stats { display: flex; gap: 0; }
+  .profile-stat {
+    flex: 1; text-align: center; padding: 12px 0;
+    border-right: 1px solid var(--border);
+  }
+  .profile-stat:last-child { border-right: none; }
+  .profile-stat-num { font-size: 20px; font-weight: 700; color: var(--primary-light); }
+  .profile-stat-label { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  .menu-list { padding: 12px 16px; }
+  .menu-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px; background: var(--card);
+    border-radius: var(--radius-sm); margin-bottom: 8px;
+    cursor: pointer; transition: all 0.2s;
+    border: 1px solid var(--border);
+  }
+  .menu-item:active { transform: scale(0.98); }
+  .menu-icon {
+    width: 38px; height: 38px; border-radius: var(--radius-xs);
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+    flex-shrink: 0;
+  }
+  .mi-purple { background: rgba(108,92,231,0.2); }
+  .mi-teal { background: rgba(0,206,201,0.2); }
+  .mi-gold { background: rgba(253,203,110,0.2); }
+  .mi-pink { background: rgba(253,121,168,0.2); }
+  .mi-green { background: rgba(0,184,148,0.2); }
+  .mi-red { background: rgba(225,112,85,0.2); }
+  .menu-text { flex: 1; }
+  .menu-title { font-size: 15px; font-weight: 600; }
+  .menu-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .menu-arrow { color: var(--text3); font-size: 18px; }
+
+  /* ── Premium Screen ── */
+  .premium-header {
+    padding: 30px 20px 24px; text-align: center;
+    background: linear-gradient(180deg, rgba(108,92,231,0.15) 0%, transparent 100%);
+  }
+  .premium-crown { font-size: 48px; margin-bottom: 12px; display: block; }
+  .premium-title { font-size: 26px; font-weight: 800; margin-bottom: 8px; }
+  .premium-sub { font-size: 14px; color: var(--text2); line-height: 1.6; }
+
+  .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 16px 20px; }
+  .feature-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 14px 12px;
+  }
+  .feature-icon { font-size: 22px; margin-bottom: 8px; }
+  .feature-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+  .feature-desc { font-size: 11px; color: var(--text3); line-height: 1.4; }
+
+  .plans-section { padding: 0 16px 20px; }
+  .plan-card {
+    background: var(--card); border: 1.5px solid var(--border);
+    border-radius: var(--radius); padding: 18px; margin-bottom: 10px;
+    cursor: pointer; transition: all 0.2s; position: relative;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .plan-card:active { transform: scale(0.98); }
+  .plan-card.popular { border-color: var(--primary); background: rgba(108,92,231,0.08); }
+  .popular-badge {
+    position: absolute; top: -10px; right: 16px;
+    background: linear-gradient(135deg, var(--primary), var(--accent2));
+    color: #fff; font-size: 11px; font-weight: 700;
+    padding: 3px 12px; border-radius: 10px; letter-spacing: 0.3px;
+  }
+  .plan-emoji { font-size: 28px; flex-shrink: 0; }
+  .plan-info { flex: 1; }
+  .plan-name { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
+  .plan-duration { font-size: 12px; color: var(--text2); }
+  .plan-price { text-align: right; }
+  .plan-amount { font-size: 18px; font-weight: 800; color: var(--gold); }
+  .plan-period { font-size: 11px; color: var(--text3); }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed; top: 16px; left: 50%; transform: translateX(-50%) translateY(-80px);
+    background: var(--card2); border: 1px solid var(--border);
+    padding: 12px 20px; border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 500; z-index: 999;
+    transition: all 0.3s; white-space: nowrap;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { border-color: rgba(0,184,148,0.4); color: var(--success); }
+  .toast.error { border-color: rgba(225,112,85,0.4); color: var(--danger); }
+
+  /* ── Quiz Battle ── */
+  .battle-card {
+    background: linear-gradient(135deg, #1a1640 0%, #2d1b69 100%);
+    border: 1px solid rgba(108,92,231,0.4); border-radius: var(--radius);
+    padding: 20px; margin: 12px 16px; cursor: pointer; transition: all 0.2s;
+  }
+  .battle-card:active { transform: scale(0.98); }
+  .battle-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .battle-sub { font-size: 13px; color: var(--text2); margin-bottom: 16px; }
+  .battle-actions { display: flex; gap: 10px; }
+  .battle-btn {
+    flex: 1; padding: 12px; border-radius: var(--radius-sm);
+    border: none; font-size: 14px; font-weight: 700; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .battle-btn.create { background: var(--primary); color: #fff; }
+  .battle-btn.join { background: var(--bg3); color: var(--text); border: 1px solid var(--border); }
+
+  /* ── Vocab Cards ── */
+  .vocab-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px; margin: 0 16px 10px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .vocab-num { font-size: 13px; color: var(--text3); font-weight: 600; min-width: 24px; }
+  .vocab-term { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
+  .vocab-def { font-size: 13px; color: var(--text2); line-height: 1.4; }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    z-index: 200; display: flex; align-items: flex-end;
+    opacity: 0; pointer-events: none; transition: all 0.3s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    width: 100%; background: var(--bg2);
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 20px; transform: translateY(100%); transition: all 0.3s;
+    max-height: 80vh; overflow-y: auto;
+  }
+  .modal-overlay.open .modal { transform: none; }
+  .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+  .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+
+  /* ── Certificate ── */
+  .cert-container {
+    margin: 16px; padding: 24px;
+    background: linear-gradient(135deg, #1a1640 0%, #0d1f3c 100%);
+    border: 1px solid rgba(253,203,110,0.3);
+    border-radius: var(--radius); text-align: center; position: relative; overflow: hidden;
+  }
+  .cert-container::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--accent2), var(--primary));
+  }
+  .cert-title { font-size: 13px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; font-weight: 600; }
+  .cert-name { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+  .cert-course { font-size: 15px; color: var(--text2); margin-bottom: 20px; }
+  .cert-trophy { font-size: 48px; margin-bottom: 16px; }
+  .cert-date { font-size: 12px; color: var(--text3); }
+
+  /* ── Empty State ── */
+  .empty-state { text-align: center; padding: 48px 24px; }
+  .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+  .empty-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .empty-sub { font-size: 14px; color: var(--text2); line-height: 1.5; }
+
+  /* ── Shimmer loading ── */
+  .shimmer {
+    background: linear-gradient(90deg, var(--bg3) 25%, var(--bg2) 50%, var(--bg3) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: var(--radius-sm);
+  }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 </style>
 </head>
-
 <body>
 
-<header>📚 Bilimchi LMS</header>
+<div id="app">
 
-<div class="container" id="home">
-
-  <div class="card">
-    <h3>💻 Frontend Kurs</h3>
-    <p>HTML, CSS va JS asoslari</p>
-
-    <div class="progress">
-      <div class="progress-bar" id="progress"></div>
+  <!-- ══ HOME SCREEN ══ -->
+  <div id="screen-home" class="screen active">
+    <div class="top-header">
+      <h1>📚 O'quv Platform</h1>
+      <span id="plan-badge" class="badge-free">🆓 Free</span>
     </div>
 
-    <button onclick="openLesson(1)">Boshlash</button>
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-greeting">Xush kelibsiz!</div>
+      <div class="hero-name" id="hero-name">O'quvchi</div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num" id="stat-courses">0</div>
+          <div class="hero-stat-label">Kurs</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num" id="stat-lessons">0</div>
+          <div class="hero-stat-label">Dars</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num" id="stat-pct">0%</div>
+          <div class="hero-stat-label">Progress</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="section">
+      <div class="quick-actions">
+        <div class="qa-btn" onclick="navTo('screen-courses')">
+          <div class="qa-icon">📚</div>
+          <div class="qa-label">Kurslar</div>
+          <div class="qa-sub">Barcha mavzular</div>
+        </div>
+        <div class="qa-btn" onclick="navTo('screen-ai')">
+          <div class="qa-icon">🤖</div>
+          <div class="qa-label">AI Yordamchi</div>
+          <div class="qa-sub">Savollar uchun</div>
+        </div>
+        <div class="qa-btn" onclick="showQuizBattle()">
+          <div class="qa-icon">⚔️</div>
+          <div class="qa-label">Quiz Battle</div>
+          <div class="qa-sub">Raqobat</div>
+        </div>
+        <div class="qa-btn" onclick="navTo('screen-premium')">
+          <div class="qa-icon">💎</div>
+          <div class="qa-label">Premium</div>
+          <div class="qa-sub">Barcha imkon</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Courses preview -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Kurslar</div>
+        <div class="see-all" onclick="navTo('screen-courses')">Hammasi →</div>
+      </div>
+      <div id="home-courses"></div>
+    </div>
+  </div>
+
+  <!-- ══ COURSES SCREEN ══ -->
+  <div id="screen-courses" class="screen">
+    <div class="top-header">
+      <h1>📚 Kurslar</h1>
+      <span id="courses-count-badge" class="badge-free">0 ta</span>
+    </div>
+    <div style="padding: 12px 16px 0;" id="courses-list"></div>
+  </div>
+
+  <!-- ══ LESSON LIST SCREEN ══ -->
+  <div id="screen-lessons" class="screen">
+    <div class="top-header">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><path d="M15 18l-6-6 6-6"/></svg>
+        Orqaga
+      </button>
+    </div>
+    <div style="padding: 0 16px 16px;">
+      <div id="lesson-course-header"></div>
+    </div>
+    <div class="lesson-list" id="lessons-list"></div>
+  </div>
+
+  <!-- ══ LESSON DETAIL SCREEN ══ -->
+  <div id="screen-lesson-detail" class="screen">
+    <div class="top-header">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><path d="M15 18l-6-6 6-6"/></svg>
+        Darslar
+      </button>
+    </div>
+    <div id="lesson-detail-content"></div>
+  </div>
+
+  <!-- ══ TEST SCREEN ══ -->
+  <div id="screen-test" class="screen">
+    <div class="test-header">
+      <div class="test-progress-bar"><div class="test-progress-fill" id="test-prog-fill" style="width: 10%;"></div></div>
+      <div class="test-info-row">
+        <div class="test-counter" id="test-counter">Savol 1/5</div>
+        <div class="test-timer" id="test-timer">⏱ 30</div>
+      </div>
+    </div>
+    <div class="question-card">
+      <div class="question-text" id="question-text">Savol yuklanmoqda...</div>
+    </div>
+    <div class="options-list" id="options-list"></div>
+  </div>
+
+  <!-- ══ TEST RESULT SCREEN ══ -->
+  <div id="screen-result" class="screen">
+    <div style="padding: 40px 20px 20px; text-align: center;">
+      <div class="result-circle" id="result-circle">
+        <svg width="120" height="120" viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8"/>
+          <circle cx="60" cy="60" r="52" fill="none" stroke="url(#rg)" stroke-width="8"
+            stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7"
+            transform="rotate(-90 60 60)" id="result-arc" style="transition: stroke-dashoffset 1s ease;"/>
+          <defs><linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#6C5CE7"/>
+            <stop offset="100%" stop-color="#00cec9"/>
+          </linearGradient></defs>
+        </svg>
+        <div class="result-pct" id="result-pct">0%</div>
+        <div class="result-label" id="result-label">Natija</div>
+      </div>
+      <div style="font-size: 22px; font-weight: 800; margin-bottom: 8px;" id="result-title">Test yakunlandi!</div>
+      <div style="font-size: 14px; color: var(--text2); margin-bottom: 32px;" id="result-desc"></div>
+      <div id="result-actions"></div>
+    </div>
+  </div>
+
+  <!-- ══ VOCAB SCREEN ══ -->
+  <div id="screen-vocab" class="screen">
+    <div class="top-header">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><path d="M15 18l-6-6 6-6"/></svg>
+        Darsga
+      </button>
+    </div>
+    <div style="padding: 4px 16px 16px;">
+      <div style="font-size: 20px; font-weight: 700;" id="vocab-title">Lug'at</div>
+      <div style="font-size: 13px; color: var(--text2); margin-top: 4px;" id="vocab-sub"></div>
+    </div>
+    <div id="vocab-list"></div>
+    <div style="padding: 16px;">
+      <button class="action-btn btn-accent" onclick="vocabDone()">✅ Yodladim — Testga o'tish</button>
+    </div>
+  </div>
+
+  <!-- ══ AI SCREEN ══ -->
+  <div id="screen-ai" class="screen">
+    <div class="top-header">
+      <h1>🤖 AI Yordamchi</h1>
+      <div id="ai-limit-badge" class="badge-free"></div>
+    </div>
+    <div class="ai-modes">
+      <div class="ai-mode-chip active" onclick="setAiMode('universal')">🌐 Universal</div>
+      <div class="ai-mode-chip" onclick="setAiMode('lesson')">📖 Dars</div>
+      <div class="ai-mode-chip" onclick="setAiMode('image')">🎨 Rasm Prompt</div>
+    </div>
+    <div id="ai-chat-container" class="ai-chat">
+      <div class="chat-bubble bot">
+        Salom! Men AI yordamchiman. 👋<br><br>
+        <b>Universal rejim:</b> Har qanday savolingizga javob beraman.<br>
+        <b>Dars rejim:</b> Dars mavzusida yordam beraman.<br>
+        <b>Rasm Prompt:</b> Tavsifdan inglizcha prompt yarataman.<br><br>
+        Savolingizni yozing! 😊
+      </div>
+    </div>
+    <div id="ai-premium-notice" style="display:none; padding: 20px; text-align: center;">
+      <div style="font-size: 36px; margin-bottom: 12px;">🔒</div>
+      <div style="font-size: 17px; font-weight: 700; margin-bottom: 8px;">AI Premium uchun</div>
+      <div style="font-size: 14px; color: var(--text2); margin-bottom: 20px;">AI yordamchi faqat Premium foydalanuvchilar uchun</div>
+      <button class="action-btn btn-primary" onclick="navTo('screen-premium')" style="max-width: 260px; margin: 0 auto;">💎 Premium Olish</button>
+    </div>
+    <div class="ai-input-row" id="ai-input-row">
+      <textarea class="ai-input" id="ai-input" placeholder="Savolingizni yozing..." rows="1" onkeydown="aiKeydown(event)"></textarea>
+      <button class="ai-send-btn" onclick="sendAiMessage()">
+        <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ PROFILE SCREEN ══ -->
+  <div id="screen-profile" class="screen">
+    <div class="profile-hero">
+      <div class="avatar" id="profile-avatar">U</div>
+      <div class="profile-name" id="profile-name">Foydalanuvchi</div>
+      <div class="profile-plan" id="profile-plan-text">🆓 Free tarif</div>
+      <div class="profile-stats">
+        <div class="profile-stat">
+          <div class="profile-stat-num" id="ps-courses">0</div>
+          <div class="profile-stat-label">Kurs</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-num" id="ps-done">0</div>
+          <div class="profile-stat-label">Yakunlangan</div>
+        </div>
+        <div class="profile-stat">
+          <div class="profile-stat-num" id="ps-score">—</div>
+          <div class="profile-stat-label">O'rtacha ball</div>
+        </div>
+      </div>
+    </div>
+    <div class="menu-list">
+      <div class="menu-item" onclick="navTo('screen-progress')">
+        <div class="menu-icon mi-purple">📊</div>
+        <div class="menu-text"><div class="menu-title">Progressim</div><div class="menu-sub">Kurs natijalari</div></div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item" onclick="navTo('screen-certs')">
+        <div class="menu-icon mi-gold">🏆</div>
+        <div class="menu-text"><div class="menu-title">Sertifikatlar</div><div class="menu-sub">Yakunlangan kurslar</div></div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item" onclick="navTo('screen-premium')">
+        <div class="menu-icon mi-pink">💎</div>
+        <div class="menu-text"><div class="menu-title">Premium obuna</div><div class="menu-sub" id="menu-premium-sub">Barcha imkoniyatlar</div></div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item" onclick="navTo('screen-referral')">
+        <div class="menu-icon mi-teal">👥</div>
+        <div class="menu-text"><div class="menu-title">Do'stlarni taklif</div><div class="menu-sub">Bepul Premium qozon</div></div>
+        <div class="menu-arrow">›</div>
+      </div>
+      <div class="menu-item" onclick="showSupport()">
+        <div class="menu-icon mi-green">💬</div>
+        <div class="menu-text"><div class="menu-title">Admin bilan bog'lanish</div><div class="menu-sub">Yordam kerakmi?</div></div>
+        <div class="menu-arrow">›</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PROGRESS SCREEN ══ -->
+  <div id="screen-progress" class="screen">
+    <div class="top-header">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><path d="M15 18l-6-6 6-6"/></svg>
+        Orqaga
+      </button>
+      <h1 style="font-size:18px;">📊 Progress</h1>
+    </div>
+    <div style="padding:12px 16px 0;" id="progress-content"></div>
+  </div>
+
+  <!-- ══ CERTS SCREEN ══ -->
+  <div id="screen-certs" class="screen">
+    <div class="top-header">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><path d="M15 18l-6-6 6-6"/></svg>
+        Orqaga
+      </button>
+      <h1 style="font-size:18px;">🏆 Sertifikatlar</h1>
+    </div>
+    <div id="certs-content"></div>
+  </div>
+
+  <!-- ══ PREMIUM SCREEN ══ -->
+  <div id="screen-premium" class="screen">
+    <div class="top-header">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><path d="M15 18l-6-6 6-6"/></svg>
+        Orqaga
+      </button>
+    </div>
+    <div class="premium-header">
+      <span class="premium-crown">💎</span>
+      <div class="premium-title">Premium Obuna</div>
+      <div class="premium-sub">Barcha imkoniyatlar bir joyda.<br>Kunlik tariflardan boshlang!</div>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card"><div class="feature-icon">🤖</div><div class="feature-name">AI Yordamchi</div><div class="feature-desc">Cheksiz savol-javob</div></div>
+      <div class="feature-card"><div class="feature-icon">⚔️</div><div class="feature-name">Quiz Battle</div><div class="feature-desc">Do'stlar bilan bellashuv</div></div>
+      <div class="feature-card"><div class="feature-icon">📖</div><div class="feature-name">Dars Lug'ati</div><div class="feature-desc">Yangi atamalar</div></div>
+      <div class="feature-card"><div class="feature-icon">🏆</div><div class="feature-name">Sertifikat</div><div class="feature-desc">Kurs yakunida</div></div>
+      <div class="feature-card"><div class="feature-icon">🔓</div><div class="feature-name">Barcha Darslar</div><div class="feature-desc">Cheksiz kirish</div></div>
+      <div class="feature-card"><div class="feature-icon">📢</div><div class="feature-name">Ota-Ona Hisobot</div><div class="feature-desc">Progress xabari</div></div>
+    </div>
+    <div style="padding: 4px 16px 12px;"><div style="font-size:17px; font-weight:700; margin-bottom:14px;">Tarif tanlang:</div>
+    <div id="plans-list"></div></div>
+  </div>
+
+  <!-- ══ REFERRAL SCREEN ══ -->
+  <div id="screen-referral" class="screen">
+    <div class="top-header">
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><path d="M15 18l-6-6 6-6"/></svg>
+        Orqaga
+      </button>
+      <h1 style="font-size:18px;">👥 Referral</h1>
+    </div>
+    <div style="padding: 20px 16px;">
+      <div style="text-align:center; margin-bottom:24px;">
+        <div style="font-size:48px; margin-bottom:12px;">🎁</div>
+        <div style="font-size:20px; font-weight:700; margin-bottom:8px;">Do'stlarni taklif qiling</div>
+        <div style="font-size:14px; color:var(--text2); line-height:1.6;">Do'stlaringizni taklif qilib bepul Premium qozonin!</div>
+      </div>
+      <div style="background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:16px;">
+        <div style="font-size:12px; color:var(--text3); margin-bottom:6px;">Sizning referral havolangiz:</div>
+        <div style="font-size:13px; color:var(--primary-light); word-break:break-all;" id="ref-link">Yuklanmoqda...</div>
+        <button class="action-btn btn-ghost" onclick="copyRef()" style="margin-top:12px; margin-bottom:0; font-size:13px; padding:10px;">📋 Nusxa olish</button>
+      </div>
+      <div style="background:var(--card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden;">
+        <div style="padding:14px 16px; border-bottom:1px solid var(--border);">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-size:14px; font-weight:600;">🥉 3 ta do'st</div>
+              <div style="font-size:12px; color:var(--text3);">→ 3 kunlik Premium</div>
+            </div>
+            <div id="ref-m1-badge" style="font-size:20px;">⭕</div>
+          </div>
+        </div>
+        <div style="padding:14px 16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-size:14px; font-weight:600;">🥇 10 ta do'st</div>
+              <div style="font-size:12px; color:var(--text3);">→ 1 oylik Premium</div>
+            </div>
+            <div id="ref-m2-badge" style="font-size:20px;">⭕</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:12px; text-align:center; font-size:14px; color:var(--text2);">Taklif qilganlar: <b id="ref-count" style="color:var(--primary-light);">0</b> ta</div>
+    </div>
   </div>
 
 </div>
 
-<div class="container lesson" id="lesson1">
-  <h2>📘 1-Dars: HTML nima?</h2>
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <button class="nav-item active" id="nav-home" onclick="navTo('screen-home')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+    Bosh
+  </button>
+  <button class="nav-item" id="nav-courses" onclick="navTo('screen-courses')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+    Kurslar
+  </button>
+  <button class="nav-item" id="nav-ai" onclick="navTo('screen-ai')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+    AI
+  </button>
+  <button class="nav-item" id="nav-profile" onclick="navTo('screen-profile')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    Profil
+  </button>
+</nav>
 
-  <p>HTML — bu web sahifa yaratish uchun ishlatiladi.</p>
+<!-- Toast -->
+<div class="toast" id="toast"></div>
 
-  <button onclick="nextLesson()">Keyingi dars</button>
-  <button class="back" onclick="goHome()">⬅️ Orqaga</button>
-</div>
-
-<div class="container lesson" id="lesson2">
-  <h2>📘 2-Dars: CSS nima?</h2>
-
-  <p>CSS dizayn berish uchun ishlatiladi.</p>
-
-  <button onclick="finish()">Tugatish</button>
-  <button class="back" onclick="goHome()">⬅️ Orqaga</button>
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div id="modal-content"></div>
+  </div>
 </div>
 
 <script>
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+const tg = window.Telegram?.WebApp
+const user = tg?.initDataUnsafe?.user || {}
+const userName = user.first_name || 'O\'quvchi'
+const userId = user.id || 0
 
-// Telegram user (bonus)
-const tg = window.Telegram?.WebApp;
-if(tg){
-  tg.expand();
+tg?.ready()
+tg?.expand()
+tg?.setHeaderColor('#0f0e17')
+tg?.setBackgroundColor('#0f0e17')
+
+let state = {
+  isPremium: false,
+  planName: 'Free',
+  planExpire: null,
+  currentCourse: null,
+  currentLesson: null,
+  screenHistory: ['screen-home'],
+  aiMode: 'universal',
+  testData: { questions:[], current:0, correct:0, timer:null },
+  vocabLesson: null,
+  referralCode: `ref_${userId}`,
+  referralCount: 0,
 }
 
-// Lesson ochish
-function openLesson(id){
-  document.getElementById("home").style.display="none";
-  document.getElementById("lesson"+id).style.display="block";
+// Sample data (in real app — fetched from bot backend via Telegram WebApp)
+const COURSES = [
+  { id:1, title:"Ingliz tili asoslari", desc:"A1 dan B1 ga qadar", icon:"🇬🇧", color:"c1", ci:"ci1", pf:"pf-1", lessons:12, done:4 },
+  { id:2, title:"Matematika 10-sinf", desc:"Algebra va geometriya", icon:"📐", color:"c2", ci:"ci2", pf:"pf-2", lessons:20, done:0 },
+  { id:3, title:"Python dasturlash", desc:"Noldan professional gacha", icon:"🐍", color:"c3", ci:"ci3", pf:"pf-3", lessons:15, done:8 },
+  { id:4, title:"Fizika asoslari", desc:"Mexanika va termodinamika", icon:"⚡", color:"c4", ci:"ci4", pf:"pf-4", lessons:10, done:10 },
+]
+
+const LESSONS = {
+  1: [
+    { id:1, title:"Alfabet va fonetika", done:true, hasTest:true, hasVocab:true },
+    { id:2, title:"Salomlashish iboralari", done:true, hasTest:true, hasVocab:true },
+    { id:3, title:"Raqamlar va sanalar", done:true, hasTest:true, hasVocab:false },
+    { id:4, title:"Ranglar va shakllar", done:true, hasTest:true, hasVocab:true },
+    { id:5, title:"Kundalik hayot", done:false, hasTest:true, hasVocab:true, active:true },
+    { id:6, title:"Uy va mebel", done:false, hasTest:true, hasVocab:true, locked:true },
+    { id:7, title:"Ovqat va ichimlik", done:false, hasTest:true, hasVocab:true, locked:true },
+    { id:8, title:"Shahar va transport", done:false, hasTest:true, hasVocab:true, locked:true },
+  ],
+  3: [
+    { id:20, title:"Python o'rnatish", done:true, hasTest:true, hasVocab:false },
+    { id:21, title:"O'zgaruvchilar va turlar", done:true, hasTest:true, hasVocab:true },
+    { id:22, title:"Shartli operatorlar", done:true, hasTest:true, hasVocab:false },
+    { id:23, title:"Sikllar", done:true, hasTest:true, hasVocab:false },
+    { id:24, title:"Funksiyalar", done:true, hasTest:true, hasVocab:true },
+    { id:25, title:"Listlar va dict", done:true, hasTest:true, hasVocab:true },
+    { id:26, title:"Fayllar bilan ishlash", done:true, hasTest:true, hasVocab:false },
+    { id:27, title:"OOP asoslari", done:true, hasTest:true, hasVocab:true },
+    { id:28, title:"Modullar", done:false, hasTest:true, hasVocab:true, active:true },
+    { id:29, title:"Kutubxonalar", done:false, hasTest:true, hasVocab:true, locked:true },
+  ],
 }
 
-// Keyingi dars
-function nextLesson(){
-  document.getElementById("lesson1").style.display="none";
-  document.getElementById("lesson2").style.display="block";
+const SAMPLE_QUESTIONS = [
+  { q:"'Apple' so'zi qaysi sinfga kiradi?", opts:["Ot (Noun)","Fe'l (Verb)","Sifat (Adjective)","Ravish (Adverb)"], correct:0 },
+  { q:"'He is playing football' gapida zamonni aniqlang:", opts:["Simple Present","Present Continuous","Past Simple","Future Simple"], correct:1 },
+  { q:"'Beautiful' so'zining sinonimi:", opts:["Ugly","Pretty","Short","Big"], correct:1 },
+  { q:"'I ___ to school every day' bo'sh joy uchun:", opts:["goes","go","going","gone"], correct:1 },
+  { q:"'Yesterday' so'zi qaysi zamonda ishlatiladi?", opts:["Present","Future","Past","All"], correct:2 },
+]
 
-  document.getElementById("progress").style.width="70%";
+const SAMPLE_VOCAB = [
+  { term:"Apple", def:"Olma" }, { term:"Beautiful", def:"Chiroyli" },
+  { term:"Computer", def:"Kompyuter" }, { term:"Dictionary", def:"Lug'at" },
+  { term:"Education", def:"Ta'lim" }, { term:"Football", def:"Futbol" },
+  { term:"Grammar", def:"Grammatika" }, { term:"Hospital", def:"Kasalxona" },
+  { term:"Internet", def:"Internet" }, { term:"Journey", def:"Sayohat" },
+]
+
+const PLANS = [
+  { key:'premium_3', name:'3 Kunlik Premium', emoji:'⚡', price:9900, days:3, popular:false },
+  { key:'premium_7', name:'7 Kunlik Premium', emoji:'🔥', price:19900, days:7, popular:true },
+  { key:'premium_30', name:'1 Oylik Premium', emoji:'💎', price:49900, days:30, popular:false },
+  { key:'premium_90', name:'3 Oylik Premium', emoji:'👑', price:119900, days:90, popular:false },
+]
+
+// ═══════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════
+function navTo(screenId, pushHistory=true) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'))
+  const target = document.getElementById(screenId)
+  if (!target) return
+  target.classList.add('active')
+  document.getElementById('app').scrollTo(0, 0)
+
+  if (pushHistory && state.screenHistory[state.screenHistory.length-1] !== screenId) {
+    state.screenHistory.push(screenId)
+  }
+
+  // Update nav
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'))
+  const navMap = {
+    'screen-home':'nav-home','screen-courses':'nav-courses',
+    'screen-ai':'nav-ai','screen-profile':'nav-profile'
+  }
+  if (navMap[screenId]) document.getElementById(navMap[screenId]).classList.add('active')
+
+  // Screen-specific setup
+  if (screenId === 'screen-home') renderHome()
+  if (screenId === 'screen-courses') renderCourses()
+  if (screenId === 'screen-ai') renderAi()
+  if (screenId === 'screen-profile') renderProfile()
+  if (screenId === 'screen-premium') renderPremium()
+  if (screenId === 'screen-progress') renderProgress()
+  if (screenId === 'screen-certs') renderCerts()
+  if (screenId === 'screen-referral') renderReferral()
 }
 
-// Tugatish
-function finish(){
-  alert("🎉 Tabriklaymiz! Kurs tugadi!");
-  document.getElementById("progress").style.width="100%";
+function goBack() {
+  state.screenHistory.pop()
+  const prev = state.screenHistory[state.screenHistory.length-1] || 'screen-home'
+  navTo(prev, false)
 }
 
-// Orqaga
-function goHome(){
-  location.reload();
+// ═══════════════════════════════════════════════
+//  HOME
+// ═══════════════════════════════════════════════
+function renderHome() {
+  document.getElementById('hero-name').textContent = userName
+  const totalDone = COURSES.reduce((a,c) => a + c.done, 0)
+  const totalL = COURSES.reduce((a,c) => a + c.lessons, 0)
+  document.getElementById('stat-courses').textContent = COURSES.length
+  document.getElementById('stat-lessons').textContent = totalDone
+  document.getElementById('stat-pct').textContent = totalL ? Math.round(totalDone/totalL*100) + '%' : '0%'
+
+  if (state.isPremium) {
+    document.getElementById('plan-badge').className = 'badge-premium'
+    document.getElementById('plan-badge').textContent = '💎 Premium'
+  }
+
+  const el = document.getElementById('home-courses')
+  el.innerHTML = COURSES.slice(0,2).map(c => renderCourseCard(c)).join('')
 }
 
+function renderCourseCard(c) {
+  const pct = c.lessons ? Math.round(c.done/c.lessons*100) : 0
+  return `<div class="course-card ${c.color}" onclick="openCourse(${c.id})">
+    <div class="course-top">
+      <div class="course-icon ${c.ci}">${c.icon}</div>
+      <div class="course-meta">
+        <div class="course-lessons-count">${c.lessons} dars</div>
+        ${!state.isPremium && c.id!==1 ? '<div class="lock-badge">🔒 Premium</div>' : ''}
+      </div>
+    </div>
+    <div class="course-title">${c.title}</div>
+    <div class="course-desc">${c.desc}</div>
+    <div class="progress-bar"><div class="progress-fill ${c.pf}" style="width:${pct}%"></div></div>
+    <div class="progress-text"><span>${c.done}/${c.lessons} dars</span><span>${pct}%</span></div>
+  </div>`
+}
+
+// ═══════════════════════════════════════════════
+//  COURSES
+// ═══════════════════════════════════════════════
+function renderCourses() {
+  document.getElementById('courses-count-badge').textContent = COURSES.length + ' ta'
+  document.getElementById('courses-list').innerHTML = COURSES.map(c => renderCourseCard(c)).join('')
+}
+
+function openCourse(courseId) {
+  const c = COURSES.find(x => x.id === courseId)
+  if (!c) return
+  if (!state.isPremium && courseId !== 1) {
+    showToast('💎 Bu kurs Premium uchun!', 'error')
+    navTo('screen-premium')
+    return
+  }
+  state.currentCourse = c
+  renderLessons(c)
+  navTo('screen-lessons')
+}
+
+function renderLessons(c) {
+  const pct = c.lessons ? Math.round(c.done/c.lessons*100) : 0
+  document.getElementById('lesson-course-header').innerHTML = `
+    <div style="font-size:22px; font-weight:700; margin-bottom:4px;">${c.icon} ${c.title}</div>
+    <div style="font-size:13px; color:var(--text2); margin-bottom:14px;">${c.desc}</div>
+    <div class="progress-bar" style="margin-bottom:6px;"><div class="progress-fill ${c.pf}" style="width:${pct}%"></div></div>
+    <div style="font-size:12px; color:var(--text2);">${c.done}/${c.lessons} dars yakunlangan — ${pct}%</div>`
+
+  const lessons = LESSONS[c.id] || Array.from({length:c.lessons},(_, i) => ({id:100+i, title:`${i+1}-dars`, done:i<c.done, hasTest:true, hasVocab:i%2===0}))
+  document.getElementById('lessons-list').innerHTML = lessons.map((l,i) => {
+    const cls = l.done ? 'ln-done' : l.active ? 'ln-active' : 'ln-locked'
+    const icon = l.done ? '✅' : l.active ? '▶️' : '🔒'
+    const locked = l.locked ? ' locked' : ''
+    return `<div class="lesson-item${locked}" onclick="${l.locked?'showLockedMsg()':'openLesson('+l.id+','+c.id+')'}">
+      <div class="lesson-num ${cls}">${i+1}</div>
+      <div class="lesson-info">
+        <div class="lesson-title-sm">${l.title}</div>
+        <div class="lesson-meta-sm">${l.hasTest?'📝 Test':''} ${l.hasVocab?'📖 Lug\'at':''}</div>
+      </div>
+      <div class="lesson-status-icon">${icon}</div>
+    </div>`
+  }).join('')
+}
+
+function showLockedMsg() {
+  showToast('🔒 Avvalgi darsni yakunlang!', 'error')
+}
+
+// ═══════════════════════════════════════════════
+//  LESSON DETAIL
+// ═══════════════════════════════════════════════
+function openLesson(lessonId, courseId) {
+  const c = COURSES.find(x => x.id === courseId)
+  const allLessons = LESSONS[courseId] || []
+  const l = allLessons.find(x => x.id === lessonId) || { id:lessonId, title:'Dars', hasTest:true, hasVocab:true, done:false }
+  state.currentLesson = l
+  state.currentCourse = c
+
+  const videoUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+
+  document.getElementById('lesson-detail-content').innerHTML = `
+    <div class="lesson-detail-header">
+      <div class="lesson-num-badge">${c?.icon || '📖'} ${c?.title || ''}</div>
+      <div class="lesson-main-title">${l.title}</div>
+      <div class="lesson-tags">
+        ${videoUrl ? '<span class="tag tag-video">🎥 Video</span>' : ''}
+        ${l.hasTest ? '<span class="tag tag-test">📝 Test</span>' : ''}
+        ${l.hasVocab && state.isPremium ? '<span class="tag tag-vocab">📖 Lug\'at</span>' : ''}
+        ${l.done ? '<span class="tag tag-done">✅ Yakunlangan</span>' : ''}
+      </div>
+    </div>
+
+    <div class="video-player" onclick="openVideo('${videoUrl}')">
+      <div class="video-thumb">
+        <div class="play-btn">
+          <svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"/></svg>
+        </div>
+        <div class="video-label">Videoni tomosha qilish</div>
+      </div>
+    </div>
+
+    <div class="content-block">
+      <div style="background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:10px;">
+        <div style="font-size:14px; color:var(--text2); line-height:1.7;">
+          Ushbu darsda <b style="color:var(--text);">${l.title}</b> mavzusini o'rganasiz.
+          Video ko'rib bo'lgach, lug'at bilan tanishing va testdan o'ting.
+        </div>
+      </div>
+
+      ${l.hasVocab && state.isPremium ? `
+      <button class="action-btn btn-gold" onclick="openVocab(${l.id})">📖 Lug'atni o'rganish</button>` : ''}
+
+      ${l.hasTest && !l.done ? `
+      <button class="action-btn btn-primary" onclick="startTest(${l.id})">📝 Testni boshlash</button>` : ''}
+
+      ${l.done ? `<button class="action-btn btn-ghost" disabled style="opacity:0.5;">✅ Dars yakunlangan</button>` : ''}
+
+      ${state.isPremium ? `
+      <button class="action-btn btn-accent" onclick="openAiForLesson('${l.title}')">🤖 AI ga savol berish</button>` : `
+      <button class="action-btn btn-ghost" onclick="navTo('screen-premium')" style="opacity:0.7;">🔒 AI (Premium kerak)</button>`}
+    </div>`
+
+  navTo('screen-lesson-detail')
+}
+
+function openVideo(url) {
+  if (tg) tg.openLink(url)
+  else window.open(url, '_blank')
+}
+
+// ═══════════════════════════════════════════════
+//  VOCAB
+// ═══════════════════════════════════════════════
+function openVocab(lessonId) {
+  const l = state.currentLesson
+  document.getElementById('vocab-title').textContent = '📖 ' + (l?.title || 'Dars') + ' — Lug\'at'
+  document.getElementById('vocab-sub').textContent = SAMPLE_VOCAB.length + ' ta atama'
+  document.getElementById('vocab-list').innerHTML = SAMPLE_VOCAB.map((v,i) =>
+    `<div class="vocab-card">
+      <div class="vocab-num">${i+1}</div>
+      <div><div class="vocab-term">${v.term}</div><div class="vocab-def">${v.def}</div></div>
+    </div>`
+  ).join('')
+  state.vocabLesson = lessonId
+  navTo('screen-vocab')
+}
+
+function vocabDone() {
+  showToast('✅ Lug\'at o\'rganildi! Test ochildi.', 'success')
+  goBack()
+  setTimeout(() => startTest(state.vocabLesson || 1), 400)
+}
+
+// ═══════════════════════════════════════════════
+//  TEST
+// ═══════════════════════════════════════════════
+function startTest(lessonId) {
+  state.testData = {
+    lessonId, questions: SAMPLE_QUESTIONS,
+    current: 0, correct: 0, timer: 30, timerInterval: null
+  }
+  navTo('screen-test')
+  renderTestQuestion()
+  startTimer()
+}
+
+function startTimer() {
+  clearInterval(state.testData.timerInterval)
+  state.testData.timer = 30
+  state.testData.timerInterval = setInterval(() => {
+    state.testData.timer--
+    document.getElementById('test-timer').textContent = '⏱ ' + state.testData.timer
+    if (state.testData.timer <= 5) document.getElementById('test-timer').style.color = 'var(--danger)'
+    else document.getElementById('test-timer').style.color = 'var(--gold)'
+    if (state.testData.timer <= 0) { clearInterval(state.testData.timerInterval); nextQuestion(false) }
+  }, 1000)
+}
+
+function renderTestQuestion() {
+  const d = state.testData
+  const q = d.questions[d.current]
+  const pct = ((d.current) / d.questions.length) * 100
+  document.getElementById('test-prog-fill').style.width = pct + '%'
+  document.getElementById('test-counter').textContent = `Savol ${d.current+1}/${d.questions.length}`
+  document.getElementById('question-text').textContent = q.q
+  document.getElementById('options-list').innerHTML = q.opts.map((o,i) =>
+    `<button class="option-btn" onclick="answerTest(${i})" id="opt-${i}">
+      <div class="option-letter">${['A','B','C','D'][i]}</div>${o}
+    </button>`
+  ).join('')
+}
+
+function answerTest(idx) {
+  const d = state.testData
+  const q = d.questions[d.current]
+  clearInterval(d.timerInterval)
+
+  document.querySelectorAll('.option-btn').forEach(b => b.onclick = null)
+  document.getElementById('opt-'+idx).classList.add(idx === q.correct ? 'correct' : 'wrong')
+  if (idx !== q.correct) document.getElementById('opt-'+q.correct).classList.add('correct')
+
+  if (idx === q.correct) d.correct++
+  haptic('light')
+
+  setTimeout(() => nextQuestion(true), 900)
+}
+
+function nextQuestion(answered) {
+  clearInterval(state.testData.timerInterval)
+  state.testData.current++
+  if (state.testData.current >= state.testData.questions.length) {
+    showResult()
+  } else {
+    renderTestQuestion()
+    startTimer()
+  }
+}
+
+function showResult() {
+  const d = state.testData
+  const pct = Math.round(d.correct / d.questions.length * 100)
+  const passed = pct >= 60
+
+  navTo('screen-result')
+
+  setTimeout(() => {
+    document.getElementById('result-pct').textContent = pct + '%'
+    document.getElementById('result-label').textContent = passed ? '🎉 Muvaffaqiyat' : '😔 Qayta urinish'
+    document.getElementById('result-title').textContent = passed ? 'Testdan o\'tdingiz!' : 'Muvaffaqiyatsiz urinish'
+    document.getElementById('result-desc').textContent = `To'g'ri javoblar: ${d.correct}/${d.questions.length}`
+    document.getElementById('result-arc').style.strokeDashoffset = 326.7 * (1 - pct/100)
+    document.getElementById('result-arc').style.stroke = passed ? 'url(#rg)' : '#e17055'
+
+    document.getElementById('result-actions').innerHTML = `
+      ${passed ? `<button class="action-btn btn-accent" onclick="openLesson(${d.lessonId}+1, ${state.currentCourse?.id||1})">▶️ Keyingi dars</button>` : ''}
+      <button class="action-btn ${passed?'btn-ghost':'btn-primary'}" onclick="startTest(${d.lessonId})">🔄 Qayta urinish</button>
+      <button class="action-btn btn-ghost" onclick="goBack(); goBack();">📖 Darslarga qaytish</button>`
+  }, 200)
+}
+
+// ═══════════════════════════════════════════════
+//  AI
+// ═══════════════════════════════════════════════
+let aiMode = 'universal'
+
+function renderAi() {
+  if (!state.isPremium) {
+    document.getElementById('ai-input-row').style.display = 'none'
+    document.getElementById('ai-premium-notice').style.display = 'block'
+    document.getElementById('ai-chat-container').style.display = 'none'
+  } else {
+    document.getElementById('ai-input-row').style.display = 'flex'
+    document.getElementById('ai-premium-notice').style.display = 'none'
+    document.getElementById('ai-chat-container').style.display = 'flex'
+    document.getElementById('ai-limit-badge').textContent = '50/kun'
+  }
+}
+
+function setAiMode(mode) {
+  aiMode = mode
+  document.querySelectorAll('.ai-mode-chip').forEach(c => c.classList.remove('active'))
+  const chips = document.querySelectorAll('.ai-mode-chip')
+  if (mode==='universal') chips[0].classList.add('active')
+  else if (mode==='lesson') chips[1].classList.add('active')
+  else chips[2].classList.add('active')
+
+  const placeholders = {
+    universal: 'Har qanday savolingizni yozing...',
+    lesson: 'Dars haqida savolingizni yozing...',
+    image: 'Rasm tavsifini yozing (o\'zbek tilida)...'
+  }
+  document.getElementById('ai-input').placeholder = placeholders[mode]
+}
+
+function openAiForLesson(lessonTitle) {
+  navTo('screen-ai')
+  setAiMode('lesson')
+  addChatMsg('bot', `📖 <b>${lessonTitle}</b> darsi haqida savol bering!`)
+}
+
+function aiKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAiMessage() }
+}
+
+function sendAiMessage() {
+  const input = document.getElementById('ai-input')
+  const text = input.value.trim()
+  if (!text) return
+  input.value = ''
+  input.style.height = 'auto'
+
+  addChatMsg('user', text)
+
+  // Show typing
+  const container = document.getElementById('ai-chat-container')
+  const typing = document.createElement('div')
+  typing.className = 'chat-bubble bot typing-indicator'
+  typing.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>'
+  typing.id = 'typing-msg'
+  container.appendChild(typing)
+  container.scrollTop = container.scrollHeight
+
+  // Simulate AI response
+  setTimeout(() => {
+    document.getElementById('typing-msg')?.remove()
+    let resp = ''
+    if (aiMode === 'image') {
+      resp = `🎨 <b>Rasm Prompti:</b><br><br><code>${text}, professional photography, 8k resolution, detailed, vibrant colors, studio lighting</code><br><br>💡 Midjourney yoki DALL-E da ishlatishingiz mumkin!`
+    } else if (aiMode === 'lesson') {
+      resp = `📖 <b>Dars bo'yicha javob:</b><br><br>Bu savol juda yaxshi! "${text}" haqida qisqacha tushuntiraman...<br><br>✅ Asosiy tushuncha: Mavzuni chuqur o'rganish uchun darsni qayta ko'rib chiqing va testdan o'ting.`
+    } else {
+      resp = `🤖 <b>Javob:</b><br><br>"${text}" — ajoyib savol!<br><br>Bu mavzu bo'yicha sizga kerakli ma'lumotni beraman. Agar qo'shimcha tushuntirish kerak bo'lsa, aniqroq yozing! 😊`
+    }
+    addChatMsg('bot', resp)
+  }, 1500 + Math.random() * 1000)
+}
+
+function addChatMsg(from, html) {
+  const container = document.getElementById('ai-chat-container')
+  const div = document.createElement('div')
+  div.className = 'chat-bubble ' + from
+  div.innerHTML = html
+  container.appendChild(div)
+  container.scrollTop = container.scrollHeight
+}
+
+// ═══════════════════════════════════════════════
+//  PROFILE
+// ═══════════════════════════════════════════════
+function renderProfile() {
+  document.getElementById('profile-avatar').textContent = userName.charAt(0).toUpperCase()
+  document.getElementById('profile-name').textContent = userName
+  document.getElementById('profile-plan-text').textContent = state.isPremium ?
+    `💎 ${state.planName}` + (state.planExpire ? ` • ${state.planExpire}` : '') : '🆓 Free tarif'
+
+  const totalDone = COURSES.reduce((a,c) => a+c.done, 0)
+  document.getElementById('ps-courses').textContent = COURSES.filter(c=>c.done>0).length
+  document.getElementById('ps-done').textContent = totalDone
+  document.getElementById('ps-score').textContent = '82%'
+
+  document.getElementById('menu-premium-sub').textContent = state.isPremium ?
+    `Faol: ${state.planName}` : 'Barcha imkoniyatlar'
+}
+
+// ═══════════════════════════════════════════════
+//  PROGRESS
+// ═══════════════════════════════════════════════
+function renderProgress() {
+  document.getElementById('progress-content').innerHTML = COURSES.map(c => {
+    const pct = c.lessons ? Math.round(c.done/c.lessons*100) : 0
+    return `<div style="background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+        <div style="font-size:15px; font-weight:700;">${c.icon} ${c.title}</div>
+        <div style="font-size:13px; color:var(--primary-light); font-weight:700;">${pct}%</div>
+      </div>
+      <div class="progress-bar" style="margin-bottom:6px;"><div class="progress-fill ${c.pf}" style="width:${pct}%"></div></div>
+      <div style="font-size:12px; color:var(--text2);">${c.done}/${c.lessons} dars yakunlangan</div>
+    </div>`
+  }).join('')
+}
+
+// ═══════════════════════════════════════════════
+//  CERTS
+// ═══════════════════════════════════════════════
+function renderCerts() {
+  const completed = COURSES.filter(c => c.done === c.lessons && c.lessons > 0)
+  if (!completed.length) {
+    document.getElementById('certs-content').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🏆</div>
+        <div class="empty-title">Hali sertifikat yo'q</div>
+        <div class="empty-sub">Kursni to'liq yakunlasangiz, sertifikat olasiz!</div>
+        <button class="action-btn btn-primary" onclick="navTo('screen-courses')" style="max-width:220px; margin:20px auto 0;">📚 Kurslarga o'tish</button>
+      </div>`
+    return
+  }
+  const today = new Date().toLocaleDateString('uz-UZ',{year:'numeric',month:'long',day:'numeric'})
+  document.getElementById('certs-content').innerHTML = completed.map(c =>
+    `<div class="cert-container">
+      <div class="cert-title">Sertifikat</div>
+      <div class="cert-trophy">🏆</div>
+      <div style="font-size:13px; color:var(--text2); margin-bottom:6px;">Mazkur sertifikat</div>
+      <div class="cert-name">${userName}</div>
+      <div style="font-size:13px; color:var(--text2); margin-bottom:4px;">ga beriladi</div>
+      <div class="cert-course">${c.icon} ${c.title}</div>
+      <div class="cert-date">📅 ${today}</div>
+      <button class="action-btn btn-gold" onclick="downloadCert('${c.title}')" style="margin-top:16px; margin-bottom:0;">📥 Yuklab olish</button>
+    </div>`
+  ).join('')
+}
+
+function downloadCert(title) {
+  showToast('✅ Sertifikat Bot orqali yuborildi!', 'success')
+}
+
+// ═══════════════════════════════════════════════
+//  PREMIUM
+// ═══════════════════════════════════════════════
+function renderPremium() {
+  document.getElementById('plans-list').innerHTML = PLANS.map(p =>
+    `<div class="plan-card${p.popular?' popular':''}" onclick="buyPlan('${p.key}','${p.name}',${p.price},${p.days})">
+      ${p.popular ? '<div class="popular-badge">⭐ Eng mashhur</div>' : ''}
+      <div class="plan-emoji">${p.emoji}</div>
+      <div class="plan-info">
+        <div class="plan-name">${p.name}</div>
+        <div class="plan-duration">${p.days} kun barcha imkoniyatlar</div>
+      </div>
+      <div class="plan-price">
+        <div class="plan-amount">${(p.price/1000).toFixed(0)}K</div>
+        <div class="plan-period">so'm</div>
+      </div>
+    </div>`
+  ).join('')
+}
+
+function buyPlan(key, name, price, days) {
+  const settings = { card: '8600 0000 0000 0000', owner: 'Platform Admin' }
+  showModal(`
+    <div class="modal-title">💳 ${name}</div>
+    <div style="background:var(--bg3); border-radius:var(--radius-sm); padding:16px; margin-bottom:16px;">
+      <div style="font-size:13px; color:var(--text2); margin-bottom:8px;">To'lov miqdori:</div>
+      <div style="font-size:28px; font-weight:800; color:var(--gold);">${price.toLocaleString()} so'm</div>
+      <div style="font-size:13px; color:var(--text2); margin-top:4px;">⏳ ${days} kun Premium</div>
+    </div>
+    <div style="background:var(--card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; margin-bottom:16px;">
+      <div style="font-size:12px; color:var(--text3); margin-bottom:6px;">Karta raqami:</div>
+      <div style="font-size:17px; font-weight:700; letter-spacing:2px; margin-bottom:4px;">${settings.card}</div>
+      <div style="font-size:13px; color:var(--text2);">👤 ${settings.owner}</div>
+    </div>
+    <div style="font-size:13px; color:var(--text2); line-height:1.6; margin-bottom:16px;">
+      📸 To'lovni amalga oshirib, <b style="color:var(--text);">chek rasmini</b> botga yuboring.
+      Admin tasdiqlashi bilan <b style="color:var(--success);">darhol faollashadi!</b>
+    </div>
+    <button class="action-btn btn-primary" onclick="closeModal(); tg?.close(); showToast('Bot orqali chek yuboring!','success')">📲 Botga o'tish</button>
+    <button class="action-btn btn-ghost" onclick="closeModal()" style="margin-bottom:0;">Bekor qilish</button>
+  `)
+}
+
+// ═══════════════════════════════════════════════
+//  REFERRAL
+// ═══════════════════════════════════════════════
+function renderReferral() {
+  const link = `https://t.me/YourBotUsername?start=${state.referralCode}`
+  document.getElementById('ref-link').textContent = link
+  document.getElementById('ref-count').textContent = state.referralCount
+  document.getElementById('ref-m1-badge').textContent = state.referralCount >= 3 ? '✅' : '⭕'
+  document.getElementById('ref-m2-badge').textContent = state.referralCount >= 10 ? '✅' : '⭕'
+}
+
+function copyRef() {
+  const link = document.getElementById('ref-link').textContent
+  navigator.clipboard?.writeText(link).then(() => showToast('✅ Havola nusxa olindi!','success'))
+    .catch(() => showToast('📋 Havolani qo\'lda nusxa oling','error'))
+}
+
+// ═══════════════════════════════════════════════
+//  QUIZ BATTLE
+// ═══════════════════════════════════════════════
+function showQuizBattle() {
+  if (!state.isPremium) {
+    showModal(`
+      <div class="modal-title">⚔️ Quiz Battle</div>
+      <div style="text-align:center; padding:20px 0;">
+        <div style="font-size:48px; margin-bottom:16px;">⚔️</div>
+        <div style="font-size:17px; font-weight:700; margin-bottom:8px;">Premium imkoniyat</div>
+        <div style="font-size:14px; color:var(--text2); margin-bottom:20px; line-height:1.6;">Quiz Battle faqat Premium foydalanuvchilar uchun mavjud</div>
+        <button class="action-btn btn-primary" onclick="closeModal(); navTo('screen-premium')">💎 Premium Olish</button>
+      </div>
+    `)
+    return
+  }
+  showModal(`
+    <div class="modal-title">⚔️ Quiz Battle</div>
+    <div class="battle-card" style="margin: 0 0 16px;">
+      <div class="battle-title">Yangi Battle boshlash</div>
+      <div class="battle-sub">Mavzu tanlang va do'stingizni taklif qiling</div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+      ${['Ingliz tili','Matematika','Python','Fizika','Kimyo','Tarix'].map(t =>
+        `<button class="action-btn btn-ghost" onclick="createBattle('${t}')" style="margin:0; font-size:13px; padding:12px;">${t}</button>`
+      ).join('')}
+    </div>
+    <div style="margin-top:16px; border-top:1px solid var(--border); padding-top:16px;">
+      <button class="action-btn btn-accent" onclick="joinBattle()" style="margin-bottom:0;">🔗 Battle ga qo'shilish</button>
+    </div>
+  `)
+}
+
+function createBattle(topic) {
+  closeModal()
+  showToast(`⚔️ "${topic}" battle yaratilmoqda...`, 'success')
+  setTimeout(() => {
+    const id = Math.floor(Math.random()*9000)+1000
+    showModal(`
+      <div class="modal-title">⚔️ Battle Tayyor!</div>
+      <div style="text-align:center; padding:16px 0;">
+        <div style="font-size:36px; margin-bottom:12px;">🎮</div>
+        <div style="font-size:15px; font-weight:700; margin-bottom:6px;">${topic}</div>
+        <div style="font-size:13px; color:var(--text2); margin-bottom:16px;">Battle ID:</div>
+        <div style="font-size:28px; font-weight:800; color:var(--primary-light); letter-spacing:4px; margin-bottom:16px;">${id}</div>
+        <div style="font-size:13px; color:var(--text2); margin-bottom:20px;">Do'stingizga bu IDni yuboring</div>
+        <button class="action-btn btn-primary" onclick="copyText('${id}'); showToast('ID nusxa olindi!','success')">📋 ID nusxa olish</button>
+        <button class="action-btn btn-gold" onclick="closeModal(); startBattle('${topic}')">▶️ Hozir boshlash</button>
+      </div>
+    `)
+  }, 1500)
+}
+
+function startBattle(topic) {
+  state.testData = { lessonId: 0, questions: SAMPLE_QUESTIONS.map(q => ({...q, q:q.q})), current:0, correct:0 }
+  navTo('screen-test')
+  renderTestQuestion()
+  startTimer()
+}
+
+function joinBattle() {
+  closeModal()
+  showToast('Battle ID kiriting (bot orqali)', 'success')
+}
+
+function copyText(text) {
+  navigator.clipboard?.writeText(text)
+}
+
+// ═══════════════════════════════════════════════
+//  SUPPORT
+// ═══════════════════════════════════════════════
+function showSupport() {
+  showModal(`
+    <div class="modal-title">💬 Admin bilan bog'lanish</div>
+    <textarea id="support-text" class="ai-input" style="width:100%; height:100px; margin-bottom:16px;" placeholder="Savolingiz yoki muammongizni yozing..."></textarea>
+    <button class="action-btn btn-primary" onclick="sendSupport()">📨 Yuborish</button>
+    <button class="action-btn btn-ghost" onclick="closeModal()" style="margin-bottom:0;">Bekor qilish</button>
+  `)
+}
+
+function sendSupport() {
+  const text = document.getElementById('support-text')?.value.trim()
+  if (!text) { showToast('Xabar yozing!', 'error'); return }
+  closeModal()
+  showToast('✅ Xabaringiz adminga yuborildi!', 'success')
+  if (tg) tg.sendData(JSON.stringify({ action: 'support', text, userId }))
+}
+
+// ═══════════════════════════════════════════════
+//  MODAL & TOAST
+// ═══════════════════════════════════════════════
+function showModal(content) {
+  document.getElementById('modal-content').innerHTML = content
+  document.getElementById('modal-overlay').classList.add('open')
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open')
+}
+
+function showToast(msg, type='') {
+  const t = document.getElementById('toast')
+  t.textContent = msg
+  t.className = 'toast show ' + type
+  clearTimeout(t._timer)
+  t._timer = setTimeout(() => t.className = 'toast', 2800)
+}
+
+function haptic(style) {
+  tg?.HapticFeedback?.impactOccurred?.(style)
+}
+
+// ═══════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════
+function init() {
+  // Get data from Telegram WebApp init data
+  if (tg?.initData) {
+    // In real app: send initData to bot backend, get user data
+    // For demo: check if URL has premium param
+  }
+
+  // Demo: simulate premium check
+  const urlParams = new URLSearchParams(window.location.search)
+  if (urlParams.get('premium') === '1') {
+    state.isPremium = true
+    state.planName = '7 Kunlik Premium'
+    state.planExpire = '15.05.2025'
+  }
+
+  renderHome()
+
+  // Telegram BackButton
+  if (tg?.BackButton) {
+    tg.BackButton.onClick(() => {
+      if (state.screenHistory.length > 1) goBack()
+      else tg.close()
+    })
+    document.querySelectorAll('.screen').forEach(s => {
+      new MutationObserver(() => {
+        if (s.classList.contains('active') && s.id !== 'screen-home') tg.BackButton.show()
+        else if (s.id === 'screen-home') tg.BackButton.hide()
+      }).observe(s, { attributes: true, attributeFilter: ['class'] })
+    })
+  }
+}
+
+init()
 </script>
-
 </body>
 </html>
