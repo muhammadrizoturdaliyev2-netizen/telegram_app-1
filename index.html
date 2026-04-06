@@ -182,7 +182,7 @@ body{
 
   <div class="user">
     <img src="https://i.pravatar.cc/100">
-    <div class="user-name" id="userName">...</div>
+    <div class="user-name" id="userName">Foydalanuvchi</div>
   </div>
 
   <div class="menu-item">📚 Mening kurslarim</div>
@@ -217,31 +217,42 @@ body{
 </div>
 
 <script>
-const tg = window.Telegram.WebApp;
-tg.ready();
 
-const user = tg.initDataUnsafe.user;
+/* TELEGRAM USER SAFE */
+const tg = window.Telegram?.WebApp;
 
-if(user){
-  document.getElementById("userName").innerText =
-    user.username ? "@"+user.username : user.first_name;
+let name = "Foydalanuvchi";
+
+if(tg){
+  tg.ready();
+  const user = tg.initDataUnsafe?.user;
+
+  if(user){
+    name = user.username 
+      ? "@"+user.username 
+      : user.first_name;
+  }
 }
 
-/* loader */
+document.getElementById("userName").innerText = name;
+
+
+/* LOADER */
 setTimeout(()=>{
   document.getElementById("loader").style.display="none";
   document.getElementById("main").style.display="block";
 },1500);
-
-/* menu */
+[06.04.2026 21:49] Turdaliyev.mmv: /* MENU */
 function toggleMenu(){
   document.getElementById("sidebar").classList.toggle("active");
   document.getElementById("overlay").classList.toggle("active");
 }
-[06.04.2026 21:45] Turdaliyev.mmv: function closeMenu(){
+
+function closeMenu(){
   document.getElementById("sidebar").classList.remove("active");
   document.getElementById("overlay").classList.remove("active");
 }
+
 </script>
 
 </body>
