@@ -12,6 +12,7 @@ body{
   font-family:-apple-system,BlinkMacSystemFont,sans-serif;
   background:linear-gradient(180deg,#f8fafc,#eef2ff);
   color:#111827;
+  overflow-x:hidden;
 }
 
 /* LOADER */
@@ -90,8 +91,22 @@ button{
   padding:20px;
   transition:0.3s;
   box-shadow:5px 0 25px rgba(0,0,0,0.1);
+  z-index:1000;
 }
 .sidebar.active{left:0}
+
+/* OVERLAY */
+.overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.3);
+  display:none;
+  z-index:900;
+}
+.overlay.active{display:block}
 
 /* USER */
 .user{text-align:center;margin-bottom:20px}
@@ -110,7 +125,6 @@ button{
   padding:22px;
   border-radius:22px;
   background:rgba(255,255,255,0.9);
-  backdrop-filter:blur(10px);
   box-shadow:0 10px 25px rgba(0,0,0,0.06);
 }
 
@@ -132,7 +146,6 @@ button{
   padding:18px;
   border-radius:18px;
   text-align:center;
-  box-shadow:0 8px 20px rgba(0,0,0,0.05);
 }
 
 /* PREMIUM */
@@ -148,13 +161,11 @@ button{
   left:50%;
   transform:translateX(-50%);
   width:92%;
-  background:rgba(255,255,255,0.9);
-  backdrop-filter:blur(12px);
+  background:white;
   border-radius:30px;
   display:flex;
   justify-content:space-around;
   padding:14px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.08);
 }
 
 .nav div{
@@ -177,6 +188,9 @@ button{
   <input id="surnameInput" placeholder="Familiyangiz">
   <button onclick="startApp()">Boshlash</button>
 </div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeMenu()"></div>
 
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
@@ -215,18 +229,14 @@ button{
   </div>
 
   <div class="card">
-    Davom eting: Frontend asoslari
-  </div>
-
-  <div class="card">
     🌟 Juda yaxshi! davom eting
-  </div>
-
-  <div class="card premium">
+  </div><div class="card premium">
     💎 Premium orqali barcha imkoniyatlardan foydalanishingiz mumkin
   </div>
 
-</div><!-- SCREENS -->
+</div>
+
+<!-- SCREENS -->
 <div id="gamesScreen" style="display:none;padding:20px;">🎮 O‘yinlar</div>
 <div id="testsScreen" style="display:none;padding:20px;">📝 Testlar</div>
 <div id="resultsScreen" style="display:none;padding:20px;">🏆 Natijalar</div>
@@ -268,6 +278,12 @@ function startApp(){
 /* MENU */
 function toggleMenu(){
   sidebar.classList.toggle("active");
+  overlay.classList.toggle("active");
+}
+
+function closeMenu(){
+  sidebar.classList.remove("active");
+  overlay.classList.remove("active");
 }
 
 /* SCREEN */
