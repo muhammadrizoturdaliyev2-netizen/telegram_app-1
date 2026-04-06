@@ -1,11 +1,10 @@
-[06.04.2026 21:38] Turdaliyev.mmv: <!DOCTYPE html>
+[06.04.2026 21:45] Turdaliyev.mmv: <!DOCTYPE html>
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bilimchi</title>
 
-<!-- Telegram API -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
@@ -182,7 +181,7 @@ body{
 <div class="sidebar" id="sidebar">
 
   <div class="user">
-    <img id="userPhoto" src="">
+    <img src="https://i.pravatar.cc/100">
     <div class="user-name" id="userName">...</div>
   </div>
 
@@ -218,7 +217,6 @@ body{
 </div>
 
 <script>
-
 const tg = window.Telegram.WebApp;
 tg.ready();
 
@@ -227,27 +225,23 @@ const user = tg.initDataUnsafe.user;
 if(user){
   document.getElementById("userName").innerText =
     user.username ? "@"+user.username : user.first_name;
-
-  document.getElementById("userPhoto").src =
-    user.photo_url ? user.photo_url : "https://i.pravatar.cc/100";
 }
 
-/* LOADER ENDI TO‘G‘RI */
+/* loader */
 setTimeout(()=>{
   document.getElementById("loader").style.display="none";
   document.getElementById("main").style.display="block";
 },1500);
-[06.04.2026 21:38] Turdaliyev.mmv: /* MENU */
+
+/* menu */
 function toggleMenu(){
   document.getElementById("sidebar").classList.toggle("active");
   document.getElementById("overlay").classList.toggle("active");
 }
-
-function closeMenu(){
+[06.04.2026 21:45] Turdaliyev.mmv: function closeMenu(){
   document.getElementById("sidebar").classList.remove("active");
   document.getElementById("overlay").classList.remove("active");
 }
-
 </script>
 
 </body>
