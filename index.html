@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+[06.04.2026 21:13] Turdaliyev.mmv: <!DOCTYPE html>
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
@@ -32,8 +32,8 @@ body {
 }
 
 .loader-circle {
-  width: 50px;
-  height: 50px;
+  width: 45px;
+  height: 45px;
   border: 4px solid #e2e8f0;
   border-top: 4px solid #3b82f6;
   border-radius: 50%;
@@ -46,7 +46,7 @@ body {
 
 .loader-text {
   text-align: center;
-  padding-bottom: 30px;
+  padding-bottom: 25px;
 }
 
 /* MAIN */
@@ -78,8 +78,8 @@ body {
 }
 
 .premium {
-  padding: 20px;
-  border-radius: 20px;
+  padding: 18px;
+  border-radius: 18px;
   background: linear-gradient(135deg, #facc15, #f59e0b);
   color: #78350f;
   font-weight: bold;
@@ -88,51 +88,54 @@ body {
 
 .card {
   height: 120px;
-  border-radius: 20px;
+  border-radius: 18px;
   background: linear-gradient(135deg, #e2e8f0, #cbd5f5);
 }
 
-/* NAV */
+/* NAV (TO‘G‘RILANGAN) */
 .bottom-nav {
   position: fixed;
-  bottom: 15px;
+  bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
-  width: 95%;
+  width: 92%;
   max-width: 420px;
   background: white;
-  border-radius: 25px;
+  border-radius: 22px;
   display: flex;
-  justify-content: space-around;
-  padding: 15px 0;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  justify-content: space-between;
+  padding: 8px 10px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
 }
 
 .nav-item {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: 20px;
   color: #94a3b8;
   cursor: pointer;
-  transition: 0.3s;
+  transition: 0.25s;
 }
 
+/* ICON */
+.nav-item i {
+  font-size: 18px;
+}
+
+/* TEXT */
 .nav-item span {
-  font-size: 12px;
-  margin-top: 5px;
+  font-size: 10px;
+  margin-top: 2px;
 }
 
+/* ACTIVE */
 .nav-item.active {
   color: #3b82f6;
-  transform: translateY(-6px);
+  transform: translateY(-3px);
 }
 
-.premium-icon {
-  color: #f59e0b;
-}
-
-/* SIDEBAR MENU */
+/* SIDEBAR */
 .sidebar {
   position: fixed;
   top: 0;
@@ -153,7 +156,6 @@ body {
 .menu-item {
   padding: 12px 0;
   border-bottom: 1px solid #eee;
-  font-size: 15px;
 }
 </style>
 </head>
@@ -200,25 +202,37 @@ body {
 
   <!-- NAV -->
   <div class="bottom-nav">
-    <div class="nav-item active">🏠<span>Asosiy</span></div>
-    <div class="nav-item">📚<span>Kurslar</span></div>
-    <div class="nav-item">🎯<span>Vazifa</span></div>
-    <div class="nav-item">🏆<span>Reyting</span></div>
-    <div class="nav-item premium-icon">💎<span>Premium</span></div>
+    <div class="nav-item active">
+      <i>🏠</i>
+      <span>Asosiy</span>
+    </div>
+    <div class="nav-item">
+      <i>📚</i>
+      <span>Kurslar</span>
+    </div>
+    <div class="nav-item">
+      <i>🎯</i>
+      <span>Vazifa</span>
+    </div>
+    <div class="nav-item">
+      <i>🏆</i>
+      <span>Reyting</span>
+    </div>
+    <div class="nav-item">
+      <i>💎</i>
+      <span>Premium</span>
+    </div>
   </div>
 
 </div>
 
 <script>
 
-/* LOADER */
 setTimeout(() => {
   document.getElementById("loader").style.display = "none";
   document.getElementById("main").style.display = "block";
-}, 2500);
-
-/* MENU */
-function toggleMenu(){
+}, 2000);
+[06.04.2026 21:13] Turdaliyev.mmv: function toggleMenu(){
   document.getElementById("sidebar").classList.toggle("active");
 }
 
