@@ -65,19 +65,14 @@ body{
 .header{
   display:flex;
   justify-content:space-between;
-  align-items:center;
   padding:18px;
-}
-
-.title{
-  font-weight:600;
 }
 
 /* SIDEBAR */
 .sidebar{
   position:fixed;
-  top:0;
   left:-260px;
+  top:0;
   width:260px;
   height:100vh;
   background:white;
@@ -86,11 +81,6 @@ body{
   z-index:1000;
 }
 .sidebar.active{left:0}
-
-.menu-item{
-  padding:14px 0;
-  border-bottom:1px solid #eee;
-}
 
 /* OVERLAY */
 .overlay{
@@ -129,10 +119,9 @@ body{
   padding:15px;
   border-radius:15px;
   text-align:center;
-  box-shadow:0 4px 10px rgba(0,0,0,0.05);
 }
 
-/* PREMIUM (TEGILMADI) */
+/* PREMIUM */
 .premium{
   background:linear-gradient(135deg,#ede9fe,#ddd6fe);
 }
@@ -149,8 +138,10 @@ body{
   display:flex;
   justify-content:space-around;
   padding:12px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.08);
 }
+
+/* SCREEN */
+.screen{display:none;padding:20px}
 </style>
 </head>
 
@@ -171,62 +162,79 @@ body{
 
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
-  <div class="menu-item">📚 Kurslar</div>
-  <div class="menu-item">🎯 Testlar</div>
-  <div class="menu-item">🏆 Reyting</div>
-  <div class="menu-item">💎 Premium</div>
+  <div>📚 Kurslar</div>
+  <div>🎯 Testlar</div>
+  <div>🏆 Reyting</div>
+  <div>💎 Premium</div>
 </div>
 
 <!-- MAIN -->
 <div class="main" id="main">
 
-  <div class="header">
-    <div onclick="toggleMenu()">☰</div>
-    <div class="title">Bilimchi</div>
-    <div>🔔</div>
-  </div>
+<div class="header">
+  <div onclick="toggleMenu()">☰</div>
+  <div>Bilimchi</div>
+  <div>🔔</div>
+</div>
 
-  <!-- 👋 GREETING -->
+<!-- HOME -->
+<div id="homeScreen">
+
   <div class="card top-card">
     <h3>Salom 👋</h3>
-    <p style="color:#6b7280;">
-      Bugun o‘zingizni rivojlantirish uchun kichik qadam tashlaymizmi?
-    </p>
+    <p>Bugun nimani o‘rganamiz?</p>
   </div>
 
-  <!-- ⚡ QUICK -->
   <div class="quick">
-    <div>🎮<br>O‘yinlar</div>
-    <div>📝<br>Testlar</div>
-    <div>📊<br>Natija</div>
+    <div onclick="showScreen('games')">🎮<br>O‘yinlar</div>
+    <div onclick="showScreen('tests')">📝<br>Testlar</div>
+    <div onclick="showScreen('results')">🏆<br>Natija</div>
   </div>
 
-  <!-- 📘 DAVOM -->
   <div class="card">
-    <h3>Darsni davom ettirish</h3>
-    <p style="color:#6b7280;">Frontend asoslari</p>
-
-    <div style="margin-top:10px;height:6px;background:#e5e7eb;border-radius:10px;">
-      <div style="width:50%;height:100%;background:#60a5fa;border-radius:10px;"></div>
-    </div>
+    Davom eting: Frontend asoslari
   </div>
 
-  <!-- 🌟 MOTIV -->
   <div class="card">
-    🌟 Juda yaxshi! Har kuni ozgina harakat katta natija beradi
+    🌟 Juda yaxshi! davom eting
   </div>
 
-  <!-- 💎 PREMIUM (O‘ZGARMADI) -->
   <div class="card premium">
     💎 Premium orqali barcha imkoniyatlardan foydalanishingiz mumkin
-  </div><!-- NAV -->
-  <div class="nav">
-    <div>🏠</div>
-    <div>📚</div>
-    <div>🎯</div>
-    <div>🏆</div>
-    <div>💎</div>
   </div>
+
+</div>
+
+<!-- GAMES -->
+<div id="gamesScreen" class="screen">
+  <h2>🎮 O‘yinlar</h2>
+  <p>Bu yerda o‘yinlar bo‘ladi</p>
+</div>
+
+<!-- TESTS -->
+<div id="testsScreen" class="screen">
+  <h2>📝 Testlar</h2>
+  <p>Test ishlash sahifasi</p>
+</div>
+
+<!-- RESULTS -->
+<div id="resultsScreen" class="screen">
+  <h2>🏆 Natijalar</h2>
+  <p>Sizning natijalaringiz</p>
+</div>
+
+<!-- PREMIUM -->
+<div id="premiumScreen" class="screen">
+  <h2>💎 Premium</h2>
+  <p>Premium imkoniyatlar</p>
+</div><!-- NAV -->
+<div class="nav">
+  <div onclick="showScreen('home')">🏠</div>
+  <div onclick="showScreen('games')">🎮</div>
+  <div onclick="showScreen('tests')">📝</div>
+  <div onclick="showScreen('results')">🏆</div>
+  <div onclick="showScreen('premium')">💎</div>
+</div>
 
 </div>
 
@@ -249,6 +257,19 @@ function toggleMenu(){
 function closeMenu(){
   sidebar.classList.remove("active");
   overlay.classList.remove("active");
+}
+
+/* SCREEN SWITCH */
+function showScreen(screen){
+
+  document.getElementById("homeScreen").style.display="none";
+  document.getElementById("gamesScreen").style.display="none";
+  document.getElementById("testsScreen").style.display="none";
+  document.getElementById("resultsScreen").style.display="none";
+  document.getElementById("premiumScreen").style.display="none";
+
+  document.getElementById(screen+"Screen").style.display="block";
+
 }
 
 </script>
