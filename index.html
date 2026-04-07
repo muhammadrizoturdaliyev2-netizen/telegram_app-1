@@ -6,13 +6,10 @@
     <title>Bilimchi - Premium Edition</title>
     <style>
         :root {
-            /* Premium ranglar palitrasi */
             --primary: #6366f1;
             --primary-dark: #4f46e5;
             --secondary: #8b5cf6;
             --premium-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-            
-            /* Light Mode (Standart) */
             --bg-color: #fcfcfd;
             --card-bg: #ffffff;
             --text-main: #1d1d1f;
@@ -20,14 +17,12 @@
             --nav-bg: rgba(30, 30, 32, 0.94);
             --input-bg: #f5f5f7;
             --card-shadow: 0 8px 30px rgba(0,0,0,0.04);
-            
             --fs-tiny: 11px;
             --fs-small: 13px;
             --fs-reg: 14px;
             --fs-title: 17px;
         }
 
-        /* Dark Mode ranglari */
         [data-theme="dark"] {
             --bg-color: #000000;
             --card-bg: #1c1c1e;
@@ -52,10 +47,9 @@
             width: 100vw; height: 100vh;
         }
 
-        /* 1. LOADER */
         #loader {
             position: fixed; inset: 0;
-            background: url('loading.jpg') center/cover no-repeat;
+            background: #6366f1; /* loading.jpg bo'lmasa rang turadi */
             display: flex; flex-direction: column; justify-content: flex-end;
             padding-bottom: 80px; align-items: center;
             z-index: 9999; transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1);
@@ -65,7 +59,6 @@
             width: 200px; height: 4px;
             background: rgba(255, 255, 255, 0.3);
             border-radius: 10px; overflow: hidden;
-            position: relative;
         }
 
         .loader-bar-fill {
@@ -80,17 +73,15 @@
         .loader-text {
             color: white; font-size: var(--fs-tiny); font-weight: 700;
             margin-top: 15px; text-transform: uppercase; letter-spacing: 2px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
-        /* 2. START SCREEN */
         #startScreen {
             height: 100vh; display: flex; align-items: center; justify-content: center;
             background: var(--bg-color); padding: 25px;
         }
 
         .auth-card { width: 100%; max-width: 360px; }
-        .auth-card h1 { font-size: 28px; font-weight: 800; margin-bottom: 8px; color: var(--text-main); }
+        .auth-card h1 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
         .auth-card p { font-size: var(--fs-reg); color: var(--text-muted); margin-bottom: 30px; }
 
         .input-group { margin-bottom: 15px; }
@@ -103,16 +94,13 @@
         }
         input:focus { border-color: var(--primary); background: var(--card-bg); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
 
-        /* Qora o'rniga PREMIUM Tugma */
         .btn-premium {
             width: 100%; padding: 16px; background: var(--premium-gradient); color: #fff;
             border: none; border-radius: 14px; font-weight: 700; font-size: var(--fs-reg);
             margin-top: 20px; cursor: pointer; transition: 0.3s;
             box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
         }
-        .btn-premium:active { transform: scale(0.97); opacity: 0.9; }
 
-        /* 3. MAIN APP */
         #mainApp { display: none; padding-top: env(safe-area-inset-top); }
 
         .app-header {
@@ -122,7 +110,7 @@
         }
 
         .container { padding: 20px; }
-        .section-header { font-size: 22px; font-weight: 800; margin-bottom: 15px; letter-spacing: -0.5px; }
+        .section-header { font-size: 22px; font-weight: 800; margin-bottom: 15px; }
 
         .card {
             background: var(--card-bg); padding: 20px; border-radius: 22px; margin-bottom: 15px;
@@ -130,10 +118,8 @@
         }
 
         .card-icon { width: 40px; height: 40px; background: var(--input-bg); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; font-size: 20px; }
-        .card-title { font-size: var(--fs-reg); font-weight: 700; margin-bottom: 4px; }
-        .card-subtitle { font-size: var(--fs-tiny); color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+        .card-title { font-size: var(--fs-reg); font-weight: 700; }
 
-        /* NAV BAR */
         .bottom-nav {
             position: fixed; bottom: calc(15px + env(safe-area-inset-bottom));
             left: 50%; transform: translateX(-50%); width: 92%; max-width: 380px;
@@ -144,21 +130,18 @@
         .nav-link { color: #a1a1a6; text-decoration: none; font-size: 22px; padding: 10px 20px; border-radius: 18px; }
         .nav-link.active { color: #fff; background: rgba(255,255,255,0.1); }
 
-        /* DARK MODE SWITCH TOGGLE */
         .theme-toggle {
             background: var(--input-bg); border-radius: 12px; padding: 8px 12px;
             display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px;
         }
 
-        /* SIDEBAR */
         #sidebar {
             position: fixed; top: 0; left: -100%; width: 85%; max-width: 300px; height: 100%;
-            background: var(--card-bg); z-index: 2000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--card-bg); z-index: 2000; transition: 0.4s;
             padding: 80px 25px;
         }
         #sidebar.active { left: 0; }
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); display: none; z-index: 1500; }
-
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
     </style>
 </head>
@@ -191,7 +174,7 @@
 
 <div id="sidebar">
     <div style="margin-bottom: 30px;">
-        <img id="sideAvatar" src="" style="width:64px; border-radius:20px;">
+        <img id="sideAvatar" src="" style="width:64px; border-radius:20px; background:#eee;">
         <h2 id="sideName" style="margin-top:15px; font-size:18px;">Ism Familiya</h2>
         <div class="theme-toggle" onclick="toggleTheme()" style="margin-top: 15px; width: fit-content;">
             <span id="themeIcon">🌙</span> <span id="themeText">Tungi rejim</span>
@@ -217,7 +200,7 @@
             <div class="container">
                 <h2 class="section-header">Salom, <span id="welcomeUser">Aziz</span>! 👋</h2>
                 <div class="card" style="background: var(--premium-gradient); color:#fff; border:none;">
-                    <p class="card-subtitle" style="color:rgba(255,255,255,0.7);">Hozirgi reyting</p>
+                    <p style="font-size: 11px; opacity: 0.8; text-transform: uppercase;">Hozirgi reyting</p>
                     <h2 style="font-size:24px; margin:5px 0;">Top 10% 🏆</h2>
                     <div style="width:100%; background:rgba(255,255,255,0.2); height:4px; border-radius:10px; margin-top:15px;">
                         <div style="width:75%; background:#fff; height:100%; border-radius:10px;"></div>
@@ -274,14 +257,11 @@
     </div>
 </div>
 
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
- <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script>
-    // 1. Telegram API init
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // 2. Theme Logic
     function toggleTheme() {
         const body = document.body;
         const currentTheme = body.getAttribute('data-theme');
@@ -299,7 +279,6 @@
         }
     }
 
-    // 3. Loader Logic
     window.addEventListener('load', () => {
         setTimeout(() => {
             const loader = document.getElementById('loader');
@@ -308,7 +287,6 @@
         }, 2600);
     });
 
-    // 4. Launch App (BOTGA ULANGAN VARIANT)
     function launchApp() {
         const name = document.getElementById('nameInput').value.trim();
         const surname = document.getElementById('surnameInput').value.trim();
@@ -318,25 +296,21 @@
             return;
         }
 
-        // Ma'lumotni JSON holatiga keltirish
         const userData = {
             name: name,
             surname: surname,
             action: 'registration'
         };
 
-        // UI ni yangilash
         document.getElementById('welcomeUser').innerText = name;
         document.getElementById('sideName').innerText = name + ' ' + surname;
         document.getElementById('sideAvatar').src = `https://ui-avatars.com/api/?name=${name}+${surname}&background=6366f1&color=fff&bold=true`;
         document.getElementById('startScreen').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
 
-        // Telegram Botga yuborish
         tg.sendData(JSON.stringify(userData));
     }
 
-    // 5. Tab System
     function switchTab(tabId, index) {
         const tabs = document.querySelectorAll('.tab-content');
         tabs.forEach(t => t.style.display = 'none');
@@ -349,18 +323,11 @@
         if(document.getElementById('sidebar').classList.contains('active')) toggleMenu();
     }
 
-    // 6. Sidebar Toggle
     function toggleMenu() {
         document.getElementById('sidebar').classList.toggle('active');
         const overlay = document.getElementById('overlay');
         overlay.style.display = (overlay.style.display === 'block') ? 'none' : 'block';
     }
 </script>
-</body>
-</html>
-    </script>
-</body>
-</html>
-
 </body>
 </html>
