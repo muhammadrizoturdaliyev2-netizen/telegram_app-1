@@ -3,272 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Bilimchi - Ultimate Edition</title>
+    <title>Bilimchi - LMS Edition</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
             --primary: #6366f1;
-            --secondary: #8b5cf6;
-            --accent: #ff3b30;
             --bg-color: #fcfcfd;
-            --card-shadow: 0 8px 30px rgba(0,0,0,0.04);
-            --fs-tiny: 11px;
-            --fs-small: 13px;
-            --fs-reg: 14px;
-            --fs-title: 17px;
+            --card-shadow: 0 8px 30px rgba(0,0,0,0.05);
         }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; }
+        body { background: var(--bg-color); color: #1d1d1f; overflow-x: hidden; }
 
-        * { 
-            margin: 0; padding: 0; box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
-            letter-spacing: -0.2px;
-        }
-
-        body { 
-            background: var(--bg-color); 
-            color: #1d1d1f; 
-            overflow-x: hidden;
-            width: 100vw; height: 100vh;
-        }
-
-        /* 1. MUKAMMAL LOADER */
+        /* Loader */
         #loader {
-            position: fixed; inset: 0;
-            background: #000; /* loading.jpg bo'lmasa qora fon turadi */
-            display: flex; flex-direction: column; justify-content: flex-end;
-            padding-bottom: 80px; align-items: center;
-            z-index: 9999; transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1);
+            position: fixed; inset: 0; background: #000; display: flex; 
+            flex-direction: column; justify-content: center; align-items: center; z-index: 9999;
+            transition: 0.8s;
         }
+        .progress-bar { width: 200px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; }
+        .progress-fill { width: 0%; height: 100%; background: #fff; animation: load 2s forwards; }
+        @keyframes load { to { width: 100%; } }
 
-        .loader-bar-container {
-            width: 200px; height: 4px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 10px; overflow: hidden;
-            position: relative; border: 1px solid rgba(255,255,255,0.1);
-        }
+        /* Screens */
+        #startScreen, #mainApp { height: 100vh; padding: 25px; }
+        #mainApp { display: none; padding-bottom: 100px; overflow-y: auto; }
 
-        .loader-bar-fill {
-            width: 0%; height: 100%;
-            background: #fff;
-            box-shadow: 0 0 15px #fff;
-            animation: fillProgress 2.5s ease-in-out forwards;
-        }
+        /* UI Elements */
+        input { width: 100%; padding: 16px; border-radius: 14px; border: 1px solid #d2d2d7; background: #f5f5f7; margin-bottom: 15px; font-size: 16px; outline: none; }
+        .btn-black { width: 100%; padding: 16px; background: #000; color: #fff; border: none; border-radius: 14px; font-weight: 600; cursor: pointer; }
+        
+        .card { background: #fff; padding: 20px; border-radius: 22px; margin-bottom: 15px; box-shadow: var(--card-shadow); transition: 0.2s; cursor: pointer; }
+        .card:active { transform: scale(0.97); }
+        .card-subtitle { font-size: 11px; color: #86868b; text-transform: uppercase; font-weight: 700; }
 
-        @keyframes fillProgress {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
+        /* Video Player Modal */
+        #videoModal { display: none; position: fixed; inset: 0; background: #000; z-index: 3000; padding: 20px; color: white; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 15px; overflow: hidden; background: #1a1a1a; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
-        .loader-text {
-            color: white; font-size: var(--fs-tiny); font-weight: 700;
-            margin-top: 15px; text-transform: uppercase; letter-spacing: 2px;
-        }
-
-        /* 2. START SCREEN */
-        #startScreen {
-            height: 100vh; display: flex; align-items: center; justify-content: center;
-            background: #fff; padding: 25px;
-        }
-
-        .auth-card { width: 100%; max-width: 360px; }
-        .auth-card h1 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
-        .auth-card p { font-size: var(--fs-reg); color: #86868b; margin-bottom: 30px; }
-
-        .input-group { margin-bottom: 15px; }
-        .input-group label { font-size: 11px; font-weight: 700; color: #86868b; text-transform: uppercase; }
-
-        input {
-            width: 100%; padding: 16px; border-radius: 14px;
-            border: 1px solid #d2d2d7; background: #f5f5f7;
-            font-size: var(--fs-reg); outline: none;
-        }
-
-        .btn-black {
-            width: 100%; padding: 16px; background: #000; color: #fff;
-            border: none; border-radius: 14px; font-weight: 600; cursor: pointer;
-        }
-
-        /* 3. MAIN APP */
-        #mainApp { display: none; padding-bottom: 100px; }
-        .app-header {
-            padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255,255,255,0.8); backdrop-filter: blur(20px);
-            position: sticky; top: 0; z-index: 1000;
-        }
-
-        .container { padding: 20px; }
-        .section-header { font-size: 22px; font-weight: 800; margin-bottom: 15px; }
-
-        .card {
-            background: #fff; padding: 20px; border-radius: 22px; margin-bottom: 15px;
-            box-shadow: var(--card-shadow); transition: 0.3s;
-        }
-        .card:active { transform: scale(0.96); }
-
-        .card-icon { width: 40px; height: 40px; background: #f5f5f7; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; font-size: 20px; }
-        .card-title { font-size: var(--fs-reg); font-weight: 700; }
-        .card-subtitle { font-size: var(--fs-tiny); color: #86868b; text-transform: uppercase; }
-
-        /* NAV BAR */
-        .bottom-nav {
-            position: fixed; bottom: 20px;
-            left: 50%; transform: translateX(-50%); width: 90%; max-width: 380px;
-            background: #1d1d1f; padding: 8px; border-radius: 26px; display: flex; justify-content: space-around;
-            z-index: 1000;
-        }
-        .nav-link { color: #86868b; text-decoration: none; font-size: 20px; padding: 10px; border-radius: 15px; }
-        .nav-link.active { color: #fff; background: rgba(255,255,255,0.1); }
-
-        #sidebar {
-            position: fixed; top: 0; left: -100%; width: 80%; height: 100%;
-            background: #fff; z-index: 2000; transition: 0.4s; padding: 60px 20px;
-        }
-        #sidebar.active { left: 0; }
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        /* Nav Bar */
+        .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; background: #1d1d1f; padding: 10px; border-radius: 25px; display: flex; justify-content: space-around; }
+        .nav-link { color: #86868b; text-decoration: none; font-size: 20px; }
+        .nav-link.active { color: #fff; }
     </style>
 </head>
 <body>
 
 <div id="loader">
-    <div class="loader-bar-container">
-        <div class="loader-bar-fill"></div>
-    </div>
-    <p class="loader-text">Bilimchi yuklanmoqda...</p>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+    <p style="color:white; margin-top:10px; font-size:12px;">YUKLANMOQDA...</p>
 </div>
 
 <div id="startScreen">
-    <div class="auth-card">
-        <h1>Bilimchi</h1>
-        <p>O'rganishni yangi darajaga olib chiqing.</p>
-        <div class="input-group">
-            <label>Ismingiz</label>
-            <input type="text" id="nameInput" placeholder="Ism">
-        </div>
-        <div class="input-group">
-            <label>Familiyangiz</label>
-            <input type="text" id="surnameInput" placeholder="Familiya">
-        </div>
-        <button class="btn-black" onclick="launchApp()">Boshlash</button>
-    </div>
-</div>
-
-<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-
-<div id="sidebar">
-    <img id="sideAvatar" src="" style="width:60px; border-radius:15px; margin-bottom:15px;">
-    <h2 id="sideName">Foydalanuvchi</h2>
-    <p id="sideId" style="color:gray; font-size:12px; margin-bottom:30px;"></p>
-    <div style="display:grid; gap:10px;">
-        <div onclick="switchTab('home', 0)" style="padding:15px; background:#f5f5f7; border-radius:12px;">🏠 Bosh sahifa</div>
-        <div onclick="switchTab('lessons', 1)" style="padding:15px; border-radius:12px;">📚 Darsliklar</div>
-        <div onclick="switchTab('premium', 3)" style="padding:15px; color:blue;">💎 Premium</div>
-    </div>
+    <h1 style="font-size:32px; margin-bottom:10px;">Bilimchi</h1>
+    <p style="color:gray; margin-bottom:30px;">Platformaga xush kelibsiz!</p>
+    <input type="text" id="nameInput" placeholder="Ismingiz">
+    <input type="text" id="surnameInput" placeholder="Familiyangiz">
+    <button class="btn-black" onclick="launchApp()">Boshlash</button>
 </div>
 
 <div id="mainApp">
-    <div class="app-header">
-        <div onclick="toggleMenu()">⚡</div>
-        <div style="font-weight:800;">BILIMCHI</div>
-        <div>👤</div>
+    <div id="homeTab" class="tab-content">
+        <h2 id="welcomeText" style="margin-bottom:20px;">Salom! 👋</h2>
+        <div class="card" style="background:var(--primary); color:white;">
+            <p>Sizning darajangiz</p>
+            <h3>Yangi o'quvchi 🌱</h3>
+        </div>
+        <div class="card" onclick="switchTab('lessons', 1)">
+            <h3>📚 Darslarni ko'rish</h3>
+            <p style="font-size:12px; color:gray;">O'rganishni hoziroq boshlang</p>
+        </div>
     </div>
 
-    <div id="content">
-        <div id="homeTab" class="tab-content">
-            <div class="container">
-                <h2>Salom, <span id="welcomeUser">Aziz</span>! 👋</h2>
-                <div class="card" style="background:#000; color:#fff; margin-top:15px;">
-                    <p style="opacity:0.6; font-size:12px;">Reyting</p>
-                    <h3>Top 10% 🏆</h3>
-                </div>
-                <div class="grid-2" style="margin-top:20px;">
-                    <div class="card" onclick="switchTab('lessons', 1)">📖<br>Darslar</div>
-                    <div class="card" onclick="switchTab('games', 2)">🎯<br>O'yinlar</div>
-                </div>
-            </div>
+    <div id="lessonsTab" class="tab-content" style="display:none;">
+        <h2 style="margin-bottom:20px;">Darsliklar</h2>
+        <div class="card" onclick="openLesson('1-Dars: Kirish', 'ZrxI-Q6oT_c')">
+            <p class="card-subtitle" style="color:green;">BEPUL</p>
+            <h4>Rus tili: Kirish va Alifbo</h4>
         </div>
-
-        <div id="lessonsTab" class="tab-content" style="display:none;">
-            <div class="container">
-                <h2 class="section-header">Darsliklar</h2>
-                <div class="card">🇷🇺 Rus tili (A1)</div>
-                <div class="card">🇺🇸 Ingliz tili (IELTS)</div>
-            </div>
+        <div class="card" onclick="alert('Bu dars faqat Premium foydalanuvchilar uchun! 👑')">
+            <p class="card-subtitle">🔒 PREMIUM</p>
+            <h4 style="opacity:0.5;">Rus tili: Salomlashish</h4>
         </div>
+    </div>
 
-        <div id="gamesTab" class="tab-content" style="display:none;">
-            <div class="container">
-                <h2 class="section-header">O'yinlar</h2>
-                <div class="card">✅ Mavzuli Quiz</div>
-                <div class="card" style="background:#fff9e6; border:1px solid gold;">💎 Duel 1vs1</div>
-            </div>
-        </div>
-
-        <div id="premiumTab" class="tab-content" style="display:none;">
-            <div class="container" style="text-align:center;">
-                <h2>Premium 👑</h2>
-                <div class="card" style="margin-top:20px; border:2px solid #000;">
-                    <h1>29 000 UZS</h1>
-                    <button class="btn-black" style="margin-top:15px;">Sotib olish</button>
-                </div>
-            </div>
+    <div id="premiumTab" class="tab-content" style="display:none; text-align:center;">
+        <h1 style="font-size:50px;">👑</h1>
+        <h2>Premium Obuna</h2>
+        <p style="color:gray; margin:15px 0;">Barcha darslar va testlarga cheksiz kirish.</p>
+        <div class="card" style="border:2px solid black;">
+            <h3>29 000 UZS / oy</h3>
+            <button class="btn-black" style="margin-top:10px;">Sotib olish</button>
         </div>
     </div>
 
     <div class="bottom-nav">
-        <a href="#" class="nav-link active" onclick="switchTab('home', 0)">🏠</a>
-        <a href="#" class="nav-link" onclick="switchTab('lessons', 1)">📚</a>
-        <a href="#" class="nav-link" onclick="switchTab('games', 2)">🎯</a>
-        <a href="#" class="nav-link" onclick="switchTab('premium', 3)">💎</a>
+        <a href="javascript:void(0)" class="nav-link active" onclick="switchTab('home', 0)">🏠</a>
+        <a href="javascript:void(0)" class="nav-link" onclick="switchTab('lessons', 1)">📚</a>
+        <a href="javascript:void(0)" class="nav-link" onclick="switchTab('premium', 2)">💎</a>
+    </div>
+</div>
+
+<div id="videoModal">
+    <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+        <h3 id="lessonTitle">Dars</h3>
+        <button onclick="closeLesson()" style="background:white; border:none; padding:5px 15px; border-radius:8px;">Yopish</button>
+    </div>
+    <div class="video-container">
+        <iframe id="videoFrame" src="" frameborder="0" allowfullscreen></iframe>
     </div>
 </div>
 
 <script>
     let tg = window.Telegram.WebApp;
-    tg.expand(); // Appni to'liq ekranga yoyish
+    tg.expand();
 
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            document.getElementById('loader').style.transform = 'translateY(-100%)';
-        }, 2500);
-    });
+    window.onload = () => {
+        setTimeout(() => { document.getElementById('loader').style.display = 'none'; }, 2200);
+    };
 
     function launchApp() {
         const name = document.getElementById('nameInput').value.trim();
         const surname = document.getElementById('surnameInput').value.trim();
+        if(!name || !surname) return alert("Ism-familiyangizni kiriting!");
 
-        if(!name || !surname) {
-            alert('Iltimos, ism va familiyangizni kiriting!');
-            return;
-        }
-
-        // MA'LUMOTNI BOTGA YUBORISH (Lekin yopilmaydi)
-        tg.sendData(JSON.stringify({name: name, surname: surname}));
-
-        document.getElementById('welcomeUser').innerText = name;
-        document.getElementById('sideName').innerText = name + ' ' + surname;
-        document.getElementById('sideAvatar').src = `https://ui-avatars.com/api/?name=${name}+${surname}&background=6366f1&color=fff`;
-
+        document.getElementById('welcomeText').innerText = `Salom, ${name}! 👋`;
         document.getElementById('startScreen').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
+        
+        // Botga ma'lumot yuborish (Yopilmasligi uchun o'zgartirilgan usul)
+        // tg.sendData(data) o'rniga biz shunchaki davom etamiz
     }
 
     function switchTab(tabId, index) {
         document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
         document.getElementById(tabId + 'Tab').style.display = 'block';
-        
         const links = document.querySelectorAll('.nav-link');
         links.forEach(l => l.classList.remove('active'));
         links[index].classList.add('active');
-
-        if(document.getElementById('sidebar').classList.contains('active')) toggleMenu();
     }
 
-    function toggleMenu() {
-        document.getElementById('sidebar').classList.toggle('active');
-        document.getElementById('overlay').style.display = 
-            (document.getElementById('overlay').style.display === 'block') ? 'none' : 'block';
+    function openLesson(title, videoId) {
+        document.getElementById('lessonTitle').innerText = title;
+        document.getElementById('videoFrame').src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        document.getElementById('videoModal').style.display = 'block';
+    }
+
+    function closeLesson() {
+        document.getElementById('videoFrame').src = "";
+        document.getElementById('videoModal').style.display = 'none';
     }
 </script>
 </body>
