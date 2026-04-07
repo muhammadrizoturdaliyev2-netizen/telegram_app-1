@@ -1,1009 +1,275 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Bilimchi - Ultimate Edition</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --accent: #ff3b30;
+            --bg-color: #fcfcfd;
+            --card-shadow: 0 8px 30px rgba(0,0,0,0.04);
+            --fs-tiny: 11px;
+            --fs-small: 13px;
+            --fs-reg: 14px;
+            --fs-title: 17px;
+        }
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap');
-*{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --bg:#0a0a0a;--bg2:#111;--bg3:#161616;--bg4:#1c1c1c;
-  --gold:#D4AF37;--gold2:#B8960C;--gold-dim:rgba(212,175,55,0.12);--gold-border:rgba(212,175,55,0.18);
-  --text:#fff;--text2:rgba(255,255,255,0.55);--text3:rgba(255,255,255,0.25);
-  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);
-  --green:#1D9E75;--red:#E24B4A;--blue:#378ADD;--purple:#7F77DD;
-}
-.light{
-  --bg:#f5f3ee;--bg2:#fff;--bg3:#f0ede6;--bg4:#ebe7df;
-  --gold:#8B6914;--gold2:#6b500d;--gold-dim:rgba(139,105,20,0.08);--gold-border:rgba(139,105,20,0.2);
-  --text:#1a1a1a;--text2:rgba(0,0,0,0.5);--text3:rgba(0,0,0,0.25);
-  --border:rgba(0,0,0,0.06);--border2:rgba(0,0,0,0.1);
-}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-.shell{display:flex;min-height:100vh;}
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+            letter-spacing: -0.2px;
+        }
 
-.sidebar{
-  width:220px;flex-shrink:0;
-  background:var(--bg2);
-  border-right:0.5px solid var(--gold-border);
-  display:flex;flex-direction:column;
-  padding:0;
-  transition:width 0.3s;
-  position:relative;
-}
-.sidebar.collapsed{width:60px;}
-.sidebar.collapsed .nav-label,.sidebar.collapsed .logo-text,.sidebar.collapsed .user-info,.sidebar.collapsed .sidebar-footer-text{display:none;}
-.sidebar.collapsed .logo-box-wrap{justify-content:center;padding:1.25rem 0;}
+        body { 
+            background: var(--bg-color); 
+            color: #1d1d1f; 
+            overflow-x: hidden;
+            width: 100vw; height: 100vh;
+        }
 
-.logo-box-wrap{
-  display:flex;align-items:center;gap:10px;
-  padding:1.25rem 1.25rem 1rem;
-  border-bottom:0.5px solid var(--gold-border);
-}
-.logo-icon{
-  width:32px;height:32px;flex-shrink:0;
-  background:linear-gradient(135deg,var(--gold),var(--gold2));
-  border-radius:8px;
-  display:flex;align-items:center;justify-content:center;
-}
-.logo-text{
-  font-family:'Playfair Display',serif;
-  font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;
-}
-.logo-text span{color:var(--gold);}
+        /* 1. MUKAMMAL LOADER */
+        #loader {
+            position: fixed; inset: 0;
+            background: #000; /* loading.jpg bo'lmasa qora fon turadi */
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding-bottom: 80px; align-items: center;
+            z-index: 9999; transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1);
+        }
 
-.nav-section{padding:1rem 0.75rem 0.5rem;flex:1;}
-.nav-section-label{
-  font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;
-  color:var(--text3);padding:0 0.5rem;margin-bottom:6px;white-space:nowrap;overflow:hidden;
-}
-.nav-item{
-  display:flex;align-items:center;gap:10px;
-  padding:9px 10px;border-radius:8px;
-  cursor:pointer;margin-bottom:2px;
-  transition:all 0.15s;color:var(--text2);font-size:13px;font-weight:400;
-}
-.nav-item:hover{background:var(--gold-dim);color:var(--text);}
-.nav-item.active{background:var(--gold-dim);color:var(--gold);border:0.5px solid var(--gold-border);}
-.nav-item svg{width:16px;height:16px;flex-shrink:0;}
-.nav-label{white-space:nowrap;}
-.nav-badge{
-  margin-left:auto;background:var(--red);color:#fff;
-  font-size:10px;font-weight:500;
-  width:16px;height:16px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
+        .loader-bar-container {
+            width: 200px; height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px; overflow: hidden;
+            position: relative; border: 1px solid rgba(255,255,255,0.1);
+        }
 
-.sidebar-footer{
-  padding:1rem 0.75rem;
-  border-top:0.5px solid var(--gold-border);
-}
-.user-card{
-  display:flex;align-items:center;gap:8px;
-  padding:8px 10px;border-radius:8px;
-  background:var(--gold-dim);border:0.5px solid var(--gold-border);
-}
-.user-avatar{
-  width:30px;height:30px;border-radius:50%;
-  background:linear-gradient(135deg,var(--gold),var(--gold2));
-  display:flex;align-items:center;justify-content:center;
-  font-size:11px;font-weight:500;color:#0a0a0a;flex-shrink:0;
-}
-.user-info{}
-.user-name{font-size:12px;font-weight:500;color:var(--text);}
-.user-plan{font-size:10px;color:var(--gold);}
+        .loader-bar-fill {
+            width: 0%; height: 100%;
+            background: #fff;
+            box-shadow: 0 0 15px #fff;
+            animation: fillProgress 2.5s ease-in-out forwards;
+        }
 
-.collapse-btn{
-  position:absolute;top:50%;right:-12px;transform:translateY(-50%);
-  width:24px;height:24px;border-radius:50%;
-  background:var(--bg2);border:0.5px solid var(--gold-border);
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;z-index:10;
-  transition:all 0.2s;
-}
-.collapse-btn:hover{background:var(--gold-dim);}
-.collapse-btn svg{width:12px;height:12px;color:var(--gold);transition:transform 0.3s;}
-.sidebar.collapsed .collapse-btn svg{transform:rotate(180deg);}
+        @keyframes fillProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
 
-.content{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+        .loader-text {
+            color: white; font-size: var(--fs-tiny); font-weight: 700;
+            margin-top: 15px; text-transform: uppercase; letter-spacing: 2px;
+        }
 
-.topbar{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:1rem 1.5rem;
-  border-bottom:0.5px solid var(--border);
-  background:var(--bg2);
-  position:sticky;top:0;z-index:5;
-}
-.topbar-left{display:flex;align-items:center;gap:8px;}
-.page-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:var(--text);}
-.page-sub{font-size:12px;color:var(--text3);margin-top:1px;}
-.topbar-right{display:flex;align-items:center;gap:10px;}
-.theme-toggle{
-  background:var(--gold-dim);border:0.5px solid var(--gold-border);
-  border-radius:20px;padding:5px 12px;
-  font-size:11px;color:var(--gold);cursor:pointer;
-  font-family:'DM Sans',sans-serif;transition:all 0.2s;
-}
-.notif-btn{
-  width:34px;height:34px;border-radius:50%;
-  background:var(--bg3);border:0.5px solid var(--border2);
-  display:flex;align-items:center;justify-content:center;cursor:pointer;
-  position:relative;transition:all 0.2s;
-}
-.notif-btn:hover{background:var(--gold-dim);border-color:var(--gold-border);}
-.notif-btn svg{width:16px;height:16px;color:var(--text2);}
-.notif-dot{
-  position:absolute;top:6px;right:6px;
-  width:8px;height:8px;border-radius:50%;
-  background:var(--red);border:1.5px solid var(--bg2);
-}
+        /* 2. START SCREEN */
+        #startScreen {
+            height: 100vh; display: flex; align-items: center; justify-content: center;
+            background: #fff; padding: 25px;
+        }
 
-.inner{padding:1.5rem;}
+        .auth-card { width: 100%; max-width: 360px; }
+        .auth-card h1 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+        .auth-card p { font-size: var(--fs-reg); color: #86868b; margin-bottom: 30px; }
 
-.hero-banner{
-  background:var(--bg3);
-  border:0.5px solid var(--gold-border);
-  border-radius:16px;
-  padding:2rem;
-  margin-bottom:1.25rem;
-  display:flex;align-items:center;justify-content:space-between;
-  position:relative;overflow:hidden;
-}
-.hero-pattern{
-  position:absolute;inset:0;opacity:0.04;
-  background-image:radial-gradient(circle,var(--gold) 1px,transparent 1px);
-  background-size:24px 24px;
-}
-.hero-left{position:relative;z-index:1;}
-.hero-greeting{font-size:12px;color:var(--text3);margin-bottom:4px;}
-.hero-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:8px;}
-.hero-name span{color:var(--gold);}
-.hero-desc{font-size:13px;color:var(--text2);margin-bottom:1.25rem;}
-.hero-btn{
-  display:inline-flex;align-items:center;gap:6px;
-  background:linear-gradient(135deg,var(--gold),var(--gold2));
-  border:none;border-radius:8px;
-  padding:9px 18px;font-size:12px;font-weight:500;
-  color:#0a0a0a;cursor:pointer;font-family:'DM Sans',sans-serif;
-  transition:all 0.2s;
-}
-.hero-btn:hover{transform:translateY(-1px);}
-.hero-right{position:relative;z-index:1;text-align:right;}
-.hero-ring{
-  width:80px;height:80px;
-  border-radius:50%;
-  border:3px solid var(--gold-border);
-  display:flex;align-items:center;justify-content:center;
-  margin-left:auto;margin-bottom:8px;
-  position:relative;
-}
-.hero-ring-fill{
-  position:absolute;inset:0;border-radius:50%;
-  background:conic-gradient(var(--gold) 259deg, transparent 0);
-  opacity:0.3;
-}
-.hero-ring-text{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--gold);}
-.hero-ring-sub{font-size:10px;color:var(--text3);}
+        .input-group { margin-bottom: 15px; }
+        .input-group label { font-size: 11px; font-weight: 700; color: #86868b; text-transform: uppercase; }
 
-.stats-grid{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  gap:10px;margin-bottom:1.25rem;
-}
-.stat-card{
-  background:var(--bg2);border:0.5px solid var(--border);
-  border-radius:12px;padding:1rem;
-  transition:all 0.2s;cursor:default;
-}
-.stat-card:hover{border-color:var(--gold-border);background:var(--bg3);}
-.stat-icon{
-  width:28px;height:28px;border-radius:7px;
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:10px;
-}
-.stat-icon svg{width:14px;height:14px;}
-.si-gold{background:rgba(212,175,55,0.12);}
-.si-green{background:rgba(29,158,117,0.12);}
-.si-blue{background:rgba(55,138,221,0.12);}
-.si-purple{background:rgba(127,119,221,0.12);}
-.stat-val{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--text);margin-bottom:2px;}
-.stat-label{font-size:11px;color:var(--text3);}
-.stat-change{font-size:10px;color:var(--green);margin-top:2px;}
+        input {
+            width: 100%; padding: 16px; border-radius: 14px;
+            border: 1px solid #d2d2d7; background: #f5f5f7;
+            font-size: var(--fs-reg); outline: none;
+        }
 
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-bottom:1.25rem;}
+        .btn-black {
+            width: 100%; padding: 16px; background: #000; color: #fff;
+            border: none; border-radius: 14px; font-weight: 600; cursor: pointer;
+        }
 
-.section-card{
-  background:var(--bg2);border:0.5px solid var(--border);
-  border-radius:14px;padding:1.25rem;
-}
-.section-header{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:1rem;
-}
-.section-title{font-size:13px;font-weight:500;color:var(--text);}
-.section-link{font-size:11px;color:var(--gold);cursor:pointer;}
+        /* 3. MAIN APP */
+        #mainApp { display: none; padding-bottom: 100px; }
+        .app-header {
+            padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(20px);
+            position: sticky; top: 0; z-index: 1000;
+        }
 
-.course-item{
-  display:flex;align-items:center;gap:10px;
-  padding:10px;border-radius:10px;
-  background:var(--bg3);margin-bottom:6px;
-  transition:all 0.2s;cursor:pointer;
-}
-.course-item:hover{background:var(--bg4);border:0.5px solid var(--gold-border);}
-.course-thumb{
-  width:40px;height:40px;border-radius:8px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;flex-shrink:0;
-}
-.course-info{flex:1;min-width:0;}
-.course-name{font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.course-bar{height:3px;background:var(--border2);border-radius:2px;overflow:hidden;margin-bottom:2px;}
-.course-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:2px;}
-.course-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);}
-.course-pct{color:var(--gold);}
+        .container { padding: 20px; }
+        .section-header { font-size: 22px; font-weight: 800; margin-bottom: 15px; }
 
-.task-item{
-  display:flex;align-items:center;gap:9px;
-  padding:9px 10px;border-radius:9px;
-  background:var(--bg3);margin-bottom:6px;
-  cursor:pointer;transition:all 0.2s;
-}
-.task-item:hover{background:var(--bg4);}
-.task-check{
-  width:16px;height:16px;border-radius:50%;
-  border:1.5px solid var(--border2);
-  flex-shrink:0;display:flex;align-items:center;justify-content:center;
-  transition:all 0.2s;cursor:pointer;
-}
-.task-check.done{background:var(--green);border-color:var(--green);}
-.task-text{font-size:12px;color:var(--text);flex:1;}
-.task-text.done{text-decoration:line-through;color:var(--text3);}
-.task-tag{
-  font-size:10px;padding:2px 7px;border-radius:8px;font-weight:500;
-}
-.tag-red{background:rgba(226,75,74,0.12);color:#E24B4A;}
-.tag-amber{background:rgba(212,175,55,0.12);color:var(--gold);}
-.tag-green{background:rgba(29,158,117,0.12);color:var(--green);}
+        .card {
+            background: #fff; padding: 20px; border-radius: 22px; margin-bottom: 15px;
+            box-shadow: var(--card-shadow); transition: 0.3s;
+        }
+        .card:active { transform: scale(0.96); }
 
-.game-card{
-  background:var(--bg3);border-radius:10px;padding:12px;
-  display:flex;flex-direction:column;align-items:center;
-  text-align:center;cursor:pointer;transition:all 0.2s;
-  border:0.5px solid transparent;
-}
-.game-card:hover{background:var(--bg4);border-color:var(--gold-border);}
-.game-icon{
-  width:44px;height:44px;border-radius:12px;
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:8px;
-}
-.game-name{font-size:12px;font-weight:500;color:var(--text);margin-bottom:2px;}
-.game-desc{font-size:10px;color:var(--text3);}
-.premium-lock{
-  font-size:9px;color:var(--gold);
-  background:rgba(212,175,55,0.1);
-  border-radius:6px;padding:2px 6px;margin-top:4px;
-}
+        .card-icon { width: 40px; height: 40px; background: #f5f5f7; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; font-size: 20px; }
+        .card-title { font-size: var(--fs-reg); font-weight: 700; }
+        .card-subtitle { font-size: var(--fs-tiny); color: #86868b; text-transform: uppercase; }
 
-.leader-item{
-  display:flex;align-items:center;gap:10px;
-  padding:8px 10px;border-radius:9px;
-  margin-bottom:4px;transition:all 0.2s;
-}
-.leader-item:hover{background:var(--bg3);}
-.leader-rank{
-  width:22px;text-align:center;
-  font-size:12px;font-weight:500;color:var(--text3);flex-shrink:0;
-}
-.rank-gold{color:#D4AF37;}
-.rank-silver{color:#C0C0C0;}
-.rank-bronze{color:#CD7F32;}
-.leader-av{
-  width:28px;height:28px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:10px;font-weight:500;flex-shrink:0;
-}
-.leader-name{font-size:12px;color:var(--text);flex:1;}
-.leader-xp{font-size:11px;color:var(--gold);font-weight:500;}
+        /* NAV BAR */
+        .bottom-nav {
+            position: fixed; bottom: 20px;
+            left: 50%; transform: translateX(-50%); width: 90%; max-width: 380px;
+            background: #1d1d1f; padding: 8px; border-radius: 26px; display: flex; justify-content: space-around;
+            z-index: 1000;
+        }
+        .nav-link { color: #86868b; text-decoration: none; font-size: 20px; padding: 10px; border-radius: 15px; }
+        .nav-link.active { color: #fff; background: rgba(255,255,255,0.1); }
 
-.ai-card{
-  background:linear-gradient(135deg,rgba(212,175,55,0.08),rgba(212,175,55,0.03));
-  border:0.5px solid var(--gold-border);
-  border-radius:14px;padding:1.25rem;
-  display:flex;align-items:center;gap:1rem;
-  cursor:pointer;transition:all 0.2s;margin-bottom:1.25rem;
-}
-.ai-card:hover{background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(212,175,55,0.06));}
-.ai-avatar{
-  width:48px;height:48px;border-radius:12px;
-  background:linear-gradient(135deg,var(--gold),var(--gold2));
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
-}
-.ai-info{flex:1;}
-.ai-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:var(--text);margin-bottom:3px;}
-.ai-desc{font-size:12px;color:var(--text2);}
-.ai-limit{
-  text-align:right;
-}
-.ai-limit-num{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--gold);}
-.ai-limit-label{font-size:10px;color:var(--text3);}
+        #sidebar {
+            position: fixed; top: 0; left: -100%; width: 80%; height: 100%;
+            background: #fff; z-index: 2000; transition: 0.4s; padding: 60px 20px;
+        }
+        #sidebar.active { left: 0; }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; z-index: 1500; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    </style>
+</head>
+<body>
 
-.notif-panel{
-  display:none;
-  position:absolute;right:0;top:100%;margin-top:8px;
-  width:280px;
-  background:var(--bg2);border:0.5px solid var(--gold-border);
-  border-radius:12px;padding:1rem;
-  z-index:100;
-}
-.notif-panel.open{display:block;}
-.notif-title{font-size:13px;font-weight:500;color:var(--text);margin-bottom:10px;}
-.notif-item{
-  display:flex;align-items:flex-start;gap:8px;
-  padding:8px 0;border-bottom:0.5px solid var(--border);
-}
-.notif-item:last-child{border-bottom:none;}
-.notif-dot2{width:6px;height:6px;border-radius:50%;margin-top:4px;flex-shrink:0;}
-.notif-text{font-size:11px;color:var(--text2);line-height:1.5;}
-.notif-time{font-size:10px;color:var(--text3);margin-top:2px;}
-
-.screen{display:none;}
-.screen.active{display:block;}
-
-.chat-wrap{display:flex;gap:1rem;}
-.chat-list-panel{
-  width:220px;flex-shrink:0;
-  background:var(--bg2);border:0.5px solid var(--border);
-  border-radius:14px;padding:1rem;
-}
-.chat-search{
-  background:var(--bg3);border:0.5px solid var(--border2);
-  border-radius:8px;padding:8px 12px;
-  font-size:12px;color:var(--text);width:100%;
-  font-family:'DM Sans',sans-serif;margin-bottom:10px;outline:none;
-}
-.chat-person{
-  display:flex;align-items:center;gap:8px;
-  padding:8px;border-radius:8px;cursor:pointer;
-  transition:all 0.2s;margin-bottom:2px;
-}
-.chat-person:hover,.chat-person.active{background:var(--gold-dim);}
-.chat-av2{
-  width:32px;height:32px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:11px;font-weight:500;flex-shrink:0;
-}
-.chat-meta2{flex:1;min-width:0;}
-.chat-nm{font-size:12px;font-weight:500;color:var(--text);}
-.chat-prev{font-size:10px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.chat-main{
-  flex:1;background:var(--bg2);border:0.5px solid var(--border);
-  border-radius:14px;display:flex;flex-direction:column;
-  min-height:350px;
-}
-.chat-header{
-  padding:1rem 1.25rem;border-bottom:0.5px solid var(--border);
-  display:flex;align-items:center;gap:10px;
-}
-.online-dot{width:8px;height:8px;border-radius:50%;background:var(--green);}
-.chat-messages{flex:1;padding:1rem;display:flex;flex-direction:column;gap:8px;}
-.msg{max-width:70%;padding:8px 12px;border-radius:12px;font-size:12px;line-height:1.5;}
-.msg-in{background:var(--bg3);color:var(--text);border-bottom-left-radius:3px;align-self:flex-start;}
-.msg-out{background:linear-gradient(135deg,rgba(212,175,55,0.2),rgba(212,175,55,0.1));color:var(--text);border-bottom-right-radius:3px;align-self:flex-end;border:0.5px solid var(--gold-border);}
-.msg-time{font-size:9px;color:var(--text3);margin-top:2px;}
-.chat-input-row{
-  padding:0.75rem 1rem;border-top:0.5px solid var(--border);
-  display:flex;align-items:center;gap:8px;
-}
-.chat-input{
-  flex:1;background:var(--bg3);border:0.5px solid var(--border2);
-  border-radius:20px;padding:8px 14px;
-  font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;
-}
-.chat-send{
-  width:32px;height:32px;border-radius:50%;
-  background:linear-gradient(135deg,var(--gold),var(--gold2));
-  display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;
-}
-.chat-send svg{width:14px;height:14px;}
-
-.kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
-.kan-col{background:var(--bg2);border:0.5px solid var(--border);border-radius:12px;padding:1rem;}
-.kan-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.kan-title{font-size:12px;font-weight:500;color:var(--text);}
-.kan-count{font-size:10px;color:var(--text3);background:var(--bg3);padding:2px 7px;border-radius:8px;}
-.kan-card{
-  background:var(--bg3);border-radius:9px;padding:10px;
-  margin-bottom:6px;border-left:2px solid transparent;
-  cursor:pointer;transition:all 0.2s;
-}
-.kan-card:hover{background:var(--bg4);}
-.kan-card.urgent{border-left-color:var(--red);}
-.kan-card.normal{border-left-color:var(--gold);}
-.kan-card.low{border-left-color:var(--green);}
-.kan-card-title{font-size:12px;color:var(--text);margin-bottom:6px;}
-.kan-card-meta{display:flex;justify-content:space-between;align-items:center;}
-.kan-deadline{font-size:10px;color:var(--text3);}
-</style>
-
-<div id="root">
-<div class="shell">
-  <div class="sidebar" id="sidebar">
-    <div class="collapse-btn" onclick="toggleSidebar()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+<div id="loader">
+    <div class="loader-bar-container">
+        <div class="loader-bar-fill"></div>
     </div>
-    <div class="logo-box-wrap">
-      <div class="logo-icon">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-      </div>
-      <span class="logo-text">Qora<span>Men</span></span>
-    </div>
-    <div class="nav-section">
-      <div class="nav-section-label">Asosiy</div>
-      <div class="nav-item active" onclick="showScreen('dashboard',this)">
-        <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-        <span class="nav-label">Dashboard</span>
-      </div>
-      <div class="nav-item" onclick="showScreen('kurslar',this)">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zm0 7L2 14l10 5 10-5-10-5zm0 7L2 21l10 5 10-5-10-5z" opacity="0.7"/></svg>
-        <span class="nav-label">Kurslarim</span>
-      </div>
-      <div class="nav-item" onclick="showScreen('oyinlar',this)">
-        <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/><path fill="none" stroke="currentColor" stroke-width="2" d="M12 8v8M8 12h8"/></svg>
-        <span class="nav-label">O'yinlar</span>
-      </div>
-      <div class="nav-item" onclick="showScreen('tasks',this)">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-        <span class="nav-label">Topshiriqlar</span>
-      </div>
-      <div class="nav-item" onclick="showScreen('chat',this)">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        <span class="nav-label">Chat</span>
-        <div class="nav-badge">2</div>
-      </div>
-      <div class="nav-item" onclick="showScreen('leaderboard',this)">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
-        <span class="nav-label">Leaderboard</span>
-      </div>
-      <div class="nav-item" onclick="showScreen('ai',this)">
-        <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
-        <span class="nav-label">Bilimchi AI</span>
-      </div>
-      <div class="nav-item" onclick="showScreen('profil',this)">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        <span class="nav-label">Profil</span>
-      </div>
-    </div>
-    <div class="sidebar-footer">
-      <div class="user-card">
-        <div class="user-avatar">JR</div>
-        <div class="user-info">
-          <div class="user-name">Jasur R.</div>
-          <div class="user-plan">Premium</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="content">
-    <div class="topbar">
-      <div class="topbar-left">
-        <div>
-          <div class="page-title" id="pageTitle">Dashboard</div>
-          <div class="page-sub" id="pageSub">Xush kelibsiz, Jasur!</div>
-        </div>
-      </div>
-      <div class="topbar-right">
-        <button class="theme-toggle" onclick="toggleTheme()">Yorug'</button>
-        <div style="position:relative;">
-          <div class="notif-btn" onclick="toggleNotif()">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-            <div class="notif-dot"></div>
-          </div>
-          <div class="notif-panel" id="notifPanel">
-            <div class="notif-title">Bildirishnomalar</div>
-            <div class="notif-item">
-              <div class="notif-dot2" style="background:var(--gold);"></div>
-              <div>
-                <div class="notif-text">React kursida yangi dars qo'shildi</div>
-                <div class="notif-time">2 daqiqa oldin</div>
-              </div>
-            </div>
-            <div class="notif-item">
-              <div class="notif-dot2" style="background:var(--red);"></div>
-              <div>
-                <div class="notif-text">Topshiriq muddati bugun tugaydi</div>
-                <div class="notif-time">1 soat oldin</div>
-              </div>
-            </div>
-            <div class="notif-item">
-              <div class="notif-dot2" style="background:var(--green);"></div>
-              <div>
-                <div class="notif-text">Sertifikat olindi: CSS Asoslari</div>
-                <div class="notif-time">Kecha</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="inner">
-
-      <div class="screen active" id="screen-dashboard">
-        <div class="hero-banner">
-          <div class="hero-pattern"></div>
-          <div class="hero-left">
-            <div class="hero-greeting">Bugun, Seshanba</div>
-            <div class="hero-name">Salom, <span>Jasur!</span></div>
-            <div class="hero-desc">72% progress — davom eting, maqsadga yaqinsiz</div>
-            <button class="hero-btn">Davom etish</button>
-          </div>
-          <div class="hero-right">
-            <div class="hero-ring">
-              <div class="hero-ring-fill"></div>
-              <div class="hero-ring-text">72%</div>
-            </div>
-            <div class="hero-ring-sub">Umumiy progress</div>
-          </div>
-        </div>
-
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-icon si-gold"><svg viewBox="0 0 24 24" fill="#D4AF37"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg></div>
-            <div class="stat-val">8</div>
-            <div class="stat-label">Aktiv kurslar</div>
-            <div class="stat-change">+2 bu oy</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon si-green"><svg viewBox="0 0 24 24" fill="#1D9E75"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" fill="none" stroke="#1D9E75" stroke-width="2"/></svg></div>
-            <div class="stat-val">3</div>
-            <div class="stat-label">Sertifikatlar</div>
-            <div class="stat-change">+1 yangi</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon si-blue"><svg viewBox="0 0 24 24" fill="#378ADD"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div>
-            <div class="stat-val">2,450</div>
-            <div class="stat-label">XP ball</div>
-            <div class="stat-change">+120 bugun</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon si-purple"><svg viewBox="0 0 24 24" fill="#7F77DD"><circle cx="12" cy="12" r="10"/></svg></div>
-            <div class="stat-val">247</div>
-            <div class="stat-label">AI savollar</div>
-            <div class="stat-change">53 qoldi</div>
-          </div>
-        </div>
-
-        <div class="ai-card" onclick="showScreen('ai',document.querySelector('[onclick*=ai]'))">
-          <div class="ai-avatar">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>
-          </div>
-          <div class="ai-info">
-            <div class="ai-name">Bilimchi AI</div>
-            <div class="ai-desc">Har qanday savolingizga javob beraman — bosing!</div>
-          </div>
-          <div class="ai-limit">
-            <div class="ai-limit-num">247<span style="font-size:13px;color:var(--text3)">/300</span></div>
-            <div class="ai-limit-label">oylik savol</div>
-          </div>
-        </div>
-
-        <div class="grid-2">
-          <div class="section-card">
-            <div class="section-header">
-              <div class="section-title">Davom etayotgan kurslar</div>
-              <div class="section-link">Hammasi</div>
-            </div>
-            <div class="course-item">
-              <div class="course-thumb" style="background:rgba(55,138,221,0.12);">📱</div>
-              <div class="course-info">
-                <div class="course-name">React Native — Asoslar</div>
-                <div class="course-bar"><div class="course-fill" style="width:72%"></div></div>
-                <div class="course-meta"><span>14/20 dars</span><span class="course-pct">72%</span></div>
-              </div>
-            </div>
-            <div class="course-item">
-              <div class="course-thumb" style="background:rgba(212,175,55,0.12);">🔒</div>
-              <div class="course-info">
-                <div class="course-name">Kiberxavfsizlik asoslari</div>
-                <div class="course-bar"><div class="course-fill" style="width:45%"></div></div>
-                <div class="course-meta"><span>9/20 dars</span><span class="course-pct">45%</span></div>
-              </div>
-            </div>
-            <div class="course-item">
-              <div class="course-thumb" style="background:rgba(29,158,117,0.12);">📊</div>
-              <div class="course-info">
-                <div class="course-name">Data Science Python</div>
-                <div class="course-bar"><div class="course-fill" style="width:28%"></div></div>
-                <div class="course-meta"><span>5/18 dars</span><span class="course-pct">28%</span></div>
-              </div>
-            </div>
-          </div>
-          <div class="section-card">
-            <div class="section-header">
-              <div class="section-title">Topshiriqlar</div>
-              <div class="section-link">Barchasi</div>
-            </div>
-            <div class="task-item">
-              <div class="task-check" onclick="toggleTask(this)"></div>
-              <div class="task-text">Sprint review tayyorlash</div>
-              <div class="task-tag tag-red">Urgent</div>
-            </div>
-            <div class="task-item">
-              <div class="task-check" onclick="toggleTask(this)"></div>
-              <div class="task-text">React dars 5 ni o'tish</div>
-              <div class="task-tag tag-amber">Normal</div>
-            </div>
-            <div class="task-item">
-              <div class="task-check done" onclick="toggleTask(this)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
-              <div class="task-text done">Quiz natijasini ko'rish</div>
-              <div class="task-tag tag-green">Tugadi</div>
-            </div>
-            <div class="task-item">
-              <div class="task-check" onclick="toggleTask(this)"></div>
-              <div class="task-text">Hisobot yuborish</div>
-              <div class="task-tag tag-amber">Normal</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="section-card">
-          <div class="section-header">
-            <div class="section-title">O'yinlar — Premium</div>
-            <div class="section-link">Barchasi</div>
-          </div>
-          <div class="grid-3" style="margin-bottom:0;">
-            <div class="game-card">
-              <div class="game-icon" style="background:rgba(212,175,55,0.12);">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>
-              </div>
-              <div class="game-name">So'z o'yini</div>
-              <div class="game-desc">Lug'at va tezlik</div>
-            </div>
-            <div class="game-card">
-              <div class="game-icon" style="background:rgba(55,138,221,0.12);">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#378ADD" stroke-width="2"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>
-              </div>
-              <div class="game-name">Flashcard</div>
-              <div class="game-desc">Kartochka yodlash</div>
-            </div>
-            <div class="game-card">
-              <div class="game-icon" style="background:rgba(127,119,221,0.12);">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7F77DD" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-              </div>
-              <div class="game-name">Viktorina</div>
-              <div class="game-desc">Tezkor savol-javob</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="screen" id="screen-kurslar">
-        <div class="section-card" style="margin-bottom:1rem;">
-          <div class="section-header">
-            <div class="section-title">Barcha kurslarim</div>
-            <div style="display:flex;gap:8px;">
-              <div class="task-tag tag-amber" style="cursor:pointer;">Davom etayotgan</div>
-              <div class="task-tag tag-green" style="cursor:pointer;">Tugagan</div>
-            </div>
-          </div>
-          <div class="course-item">
-            <div class="course-thumb" style="background:rgba(55,138,221,0.12);">📱</div>
-            <div class="course-info">
-              <div class="course-name">React Native — Asoslar</div>
-              <div class="course-bar"><div class="course-fill" style="width:72%"></div></div>
-              <div class="course-meta"><span>14/20 dars • 6.5 soat</span><span class="course-pct">72%</span></div>
-            </div>
-          </div>
-          <div class="course-item">
-            <div class="course-thumb" style="background:rgba(29,158,117,0.12);">✅</div>
-            <div class="course-info">
-              <div class="course-name">CSS Asoslari — Tugallangan</div>
-              <div class="course-bar"><div class="course-fill" style="width:100%"></div></div>
-              <div class="course-meta"><span>20/20 dars</span><span class="course-pct" style="color:var(--green);">Sertifikat olindi</span></div>
-            </div>
-          </div>
-          <div class="course-item">
-            <div class="course-thumb" style="background:rgba(212,175,55,0.12);">🔒</div>
-            <div class="course-info">
-              <div class="course-name">Kiberxavfsizlik asoslari</div>
-              <div class="course-bar"><div class="course-fill" style="width:45%"></div></div>
-              <div class="course-meta"><span>9/20 dars • 4.2 soat</span><span class="course-pct">45%</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="screen" id="screen-oyinlar">
-        <div class="section-card">
-          <div class="section-header">
-            <div class="section-title">O'yinlar — Premium</div>
-            <div class="task-tag tag-amber">XP: 2,450</div>
-          </div>
-          <div class="grid-3" style="margin-bottom:1rem;">
-            <div class="game-card" style="background:rgba(212,175,55,0.08);border:0.5px solid var(--gold-border);">
-              <div class="game-icon" style="background:rgba(212,175,55,0.15);">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/></svg>
-              </div>
-              <div class="game-name">So'z o'yini</div>
-              <div class="game-desc">Solo / 1v1 / Jamoa</div>
-            </div>
-            <div class="game-card">
-              <div class="game-icon" style="background:rgba(55,138,221,0.12);">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#378ADD" stroke-width="2"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>
-              </div>
-              <div class="game-name">Flashcard</div>
-              <div class="game-desc">Kartochka yodlash</div>
-            </div>
-            <div class="game-card">
-              <div class="game-icon" style="background:rgba(127,119,221,0.12);">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7F77DD" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-              </div>
-              <div class="game-name">Viktorina</div>
-              <div class="game-desc">Vaqtga qarshi</div>
-            </div>
-          </div>
-          <div class="section-header" style="margin-top:0.5rem;">
-            <div class="section-title">Mening natijalarim</div>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
-            <div style="background:var(--bg3);border-radius:10px;padding:12px;text-align:center;">
-              <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--gold);">47</div>
-              <div style="font-size:10px;color:var(--text3);">O'yinlar</div>
-            </div>
-            <div style="background:var(--bg3);border-radius:10px;padding:12px;text-align:center;">
-              <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--green);">38</div>
-              <div style="font-size:10px;color:var(--text3);">G'alaba</div>
-            </div>
-            <div style="background:var(--bg3);border-radius:10px;padding:12px;text-align:center;">
-              <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--purple);">12</div>
-              <div style="font-size:10px;color:var(--text3);">Badges</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="screen" id="screen-tasks">
-        <div class="kanban">
-          <div class="kan-col">
-            <div class="kan-header">
-              <div class="kan-title">Yangi</div>
-              <div class="kan-count">3</div>
-            </div>
-            <div class="kan-card urgent">
-              <div class="kan-card-title">Sprint review tayyorlash</div>
-              <div class="kan-card-meta"><span class="kan-deadline">Bugun</span><span class="task-tag tag-red">Urgent</span></div>
-            </div>
-            <div class="kan-card normal">
-              <div class="kan-card-title">Hisobot yuborish</div>
-              <div class="kan-card-meta"><span class="kan-deadline">Ertaga</span><span class="task-tag tag-amber">Normal</span></div>
-            </div>
-            <div class="kan-card low">
-              <div class="kan-card-title">Kurs materiallari ko'rish</div>
-              <div class="kan-card-meta"><span class="kan-deadline">5-aprel</span><span class="task-tag tag-green">Low</span></div>
-            </div>
-          </div>
-          <div class="kan-col">
-            <div class="kan-header">
-              <div class="kan-title">Jarayonda</div>
-              <div class="kan-count">2</div>
-            </div>
-            <div class="kan-card normal">
-              <div class="kan-card-title">React dars 5 ni o'tish</div>
-              <div class="kan-card-meta"><span class="kan-deadline">3-aprel</span><span class="task-tag tag-amber">Normal</span></div>
-            </div>
-            <div class="kan-card urgent">
-              <div class="kan-card-title">Test yakunlash</div>
-              <div class="kan-card-meta"><span class="kan-deadline">Bugun</span><span class="task-tag tag-red">Urgent</span></div>
-            </div>
-          </div>
-          <div class="kan-col">
-            <div class="kan-header">
-              <div class="kan-title">Tugadi</div>
-              <div class="kan-count">4</div>
-            </div>
-            <div class="kan-card low">
-              <div class="kan-card-title">Quiz natijasini ko'rish</div>
-              <div class="kan-card-meta"><span class="kan-deadline">Tugallandi</span><span class="task-tag tag-green">Tugadi</span></div>
-            </div>
-            <div class="kan-card low">
-              <div class="kan-card-title">Modul 1 yakunlash</div>
-              <div class="kan-card-meta"><span class="kan-deadline">Tugallandi</span><span class="task-tag tag-green">Tugadi</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="screen" id="screen-chat">
-        <div class="chat-wrap">
-          <div class="chat-list-panel">
-            <input class="chat-search" placeholder="Qidirish...">
-            <div class="chat-person active">
-              <div class="chat-av2" style="background:rgba(212,175,55,0.15);color:var(--gold);">MA</div>
-              <div class="chat-meta2"><div class="chat-nm">Malika A.</div><div class="chat-prev">Fayl yuborildi</div></div>
-            </div>
-            <div class="chat-person">
-              <div class="chat-av2" style="background:rgba(55,138,221,0.15);color:#378ADD;">BK</div>
-              <div class="chat-meta2"><div class="chat-nm">Bobur K.</div><div class="chat-prev">Salom! Qalaysiz?</div></div>
-            </div>
-            <div class="chat-person">
-              <div class="chat-av2" style="background:rgba(29,158,117,0.15);color:var(--green);">ZY</div>
-              <div class="chat-meta2"><div class="chat-nm">Zulfiya Y.</div><div class="chat-prev">Raxmat!</div></div>
-            </div>
-          </div>
-          <div class="chat-main">
-            <div class="chat-header">
-              <div class="chat-av2" style="width:34px;height:34px;background:rgba(212,175,55,0.15);color:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;">MA</div>
-              <div style="flex:1;">
-                <div style="font-size:13px;font-weight:500;color:var(--text);">Malika Azimova</div>
-                <div style="display:flex;align-items:center;gap:4px;"><div class="online-dot"></div><span style="font-size:10px;color:var(--green);">Online</span></div>
-              </div>
-            </div>
-            <div class="chat-messages">
-              <div class="msg msg-in">Salom Jasur! React proyekti haqida gaplashsak bo'ladimi?<div class="msg-time">10:23</div></div>
-              <div class="msg msg-out">Ha, albatta! Qanday savol bor?<div class="msg-time">10:25</div></div>
-              <div class="msg msg-in">useState va useEffect farqini tushuntirib bersangiz<div class="msg-time">10:26</div></div>
-              <div class="msg msg-out">useState — ma'lumotni saqlash. useEffect — side effects uchun (API, timer...)<div class="msg-time">10:28</div></div>
-            </div>
-            <div class="chat-input-row">
-              <input class="chat-input" placeholder="Xabar yozing...">
-              <button class="chat-send">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="screen" id="screen-leaderboard">
-        <div class="section-card">
-          <div class="section-header">
-            <div class="section-title">Leaderboard</div>
-            <div style="display:flex;gap:6px;">
-              <div class="task-tag tag-amber" style="cursor:pointer;">Umumiy</div>
-              <div class="task-tag" style="cursor:pointer;background:var(--bg3);color:var(--text2);">Kurs</div>
-              <div class="task-tag" style="cursor:pointer;background:var(--bg3);color:var(--text2);">O'yin</div>
-            </div>
-          </div>
-          <div style="display:flex;align-items:flex-end;justify-content:center;gap:12px;margin:1rem 0 1.5rem;">
-            <div style="text-align:center;">
-              <div style="width:56px;height:72px;background:rgba(192,192,192,0.15);border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;"><span style="font-size:20px;">🥈</span></div>
-              <div style="font-size:11px;color:var(--text);">Dilnoza</div>
-              <div style="font-size:10px;color:var(--text3);">2,180 XP</div>
-            </div>
-            <div style="text-align:center;">
-              <div style="width:64px;height:96px;background:rgba(212,175,55,0.15);border-radius:8px 8px 0 0;border:0.5px solid var(--gold-border);display:flex;align-items:center;justify-content:center;margin:0 auto 6px;"><span style="font-size:24px;">🥇</span></div>
-              <div style="font-size:12px;font-weight:500;color:var(--gold);">Jasur</div>
-              <div style="font-size:10px;color:var(--gold);">2,450 XP</div>
-            </div>
-            <div style="text-align:center;">
-              <div style="width:56px;height:60px;background:rgba(205,127,50,0.15);border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;"><span style="font-size:20px;">🥉</span></div>
-              <div style="font-size:11px;color:var(--text);">Kamol</div>
-              <div style="font-size:10px;color:var(--text3);">1,920 XP</div>
-            </div>
-          </div>
-          <div class="leader-item"><div class="leader-rank rank-gold">1</div><div class="leader-av" style="background:rgba(212,175,55,0.15);color:var(--gold);">JR</div><div class="leader-name">Jasur Rahimov <span style="font-size:10px;color:var(--gold);">(Siz)</span></div><div class="leader-xp">2,450 XP</div></div>
-          <div class="leader-item"><div class="leader-rank rank-silver">2</div><div class="leader-av" style="background:rgba(192,192,192,0.15);color:#aaa;">DA</div><div class="leader-name">Dilnoza Azimova</div><div class="leader-xp" style="color:var(--text2);">2,180 XP</div></div>
-          <div class="leader-item"><div class="leader-rank rank-bronze">3</div><div class="leader-av" style="background:rgba(205,127,50,0.15);color:#CD7F32;">KT</div><div class="leader-name">Kamol Toshmatov</div><div class="leader-xp" style="color:var(--text2);">1,920 XP</div></div>
-          <div class="leader-item"><div class="leader-rank">4</div><div class="leader-av" style="background:var(--bg3);color:var(--text2);">SY</div><div class="leader-name">Sarvar Yusupov</div><div class="leader-xp" style="color:var(--text2);">1,740 XP</div></div>
-          <div class="leader-item"><div class="leader-rank">5</div><div class="leader-av" style="background:var(--bg3);color:var(--text2);">MK</div><div class="leader-name">Mohira Karimova</div><div class="leader-xp" style="color:var(--text2);">1,580 XP</div></div>
-        </div>
-      </div>
-
-      <div class="screen" id="screen-ai">
-        <div style="background:var(--bg2);border:0.5px solid var(--gold-border);border-radius:14px;overflow:hidden;min-height:500px;display:flex;flex-direction:column;">
-          <div style="padding:1rem 1.25rem;border-bottom:0.5px solid var(--gold-border);display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(212,175,55,0.08),transparent);">
-            <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>
-            </div>
-            <div>
-              <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:var(--text);">Bilimchi AI</div>
-              <div style="font-size:10px;color:var(--green);display:flex;align-items:center;gap:4px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--green);"></div>Tayyor</div>
-            </div>
-            <div style="margin-left:auto;text-align:right;">
-              <div style="font-size:11px;color:var(--gold);font-weight:500;">247/300</div>
-              <div style="font-size:10px;color:var(--text3);">oylik savol</div>
-            </div>
-          </div>
-          <div style="flex:1;padding:1.25rem;display:flex;flex-direction:column;gap:10px;">
-            <div style="display:flex;gap:10px;align-items:flex-start;">
-              <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg></div>
-              <div style="background:var(--bg3);border-radius:12px;border-bottom-left-radius:3px;padding:10px 14px;font-size:12px;color:var(--text);line-height:1.6;max-width:80%;">Salom! Men Bilimchi AI — sizning shaxsiy o'qituvchingizman. Har qanday savol bering, yordam berishga tayyorman!</div>
-            </div>
-            <div style="display:flex;gap:10px;align-items:flex-start;flex-direction:row-reverse;">
-              <div style="width:28px;height:28px;border-radius:50%;background:rgba(212,175,55,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:500;color:var(--gold);">JR</div>
-              <div style="background:rgba(212,175,55,0.08);border:0.5px solid var(--gold-border);border-radius:12px;border-bottom-right-radius:3px;padding:10px 14px;font-size:12px;color:var(--text);max-width:80%;">React Hooks nima va nima uchun kerak?</div>
-            </div>
-            <div style="display:flex;gap:10px;align-items:flex-start;">
-              <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg></div>
-              <div style="background:var(--bg3);border-radius:12px;border-bottom-left-radius:3px;padding:10px 14px;font-size:12px;color:var(--text);line-height:1.6;max-width:85%;">React Hooks — funksional komponentlarda state va lifecycle ishlatish imkonini beradi. Asosiylar: <span style="color:var(--gold);font-weight:500;">useState</span> (ma'lumot saqlash), <span style="color:var(--gold);font-weight:500;">useEffect</span> (side effects), <span style="color:var(--gold);font-weight:500;">useContext</span> (global state).</div>
-            </div>
-          </div>
-          <div style="padding:0.75rem 1rem;border-top:0.5px solid var(--border);display:flex;gap:8px;align-items:center;">
-            <div style="width:28px;height:28px;border-radius:8px;background:var(--bg3);border:0.5px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text2)" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-            </div>
-            <input style="flex:1;background:var(--bg3);border:0.5px solid var(--border2);border-radius:20px;padding:9px 14px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;" placeholder="Savolingizni yozing...">
-            <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;cursor:pointer;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="screen" id="screen-profil">
-        <div class="grid-2">
-          <div class="section-card">
-            <div style="text-align:center;padding:1rem 0;">
-              <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:600;color:#0a0a0a;margin:0 auto 12px;">JR</div>
-              <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:600;color:var(--text);margin-bottom:4px;">Jasur Rahimov</div>
-              <div style="font-size:12px;color:var(--gold);margin-bottom:16px;">Premium • Level 12</div>
-              <div style="display:flex;justify-content:center;gap:16px;">
-                <div style="text-align:center;"><div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--gold);">2,450</div><div style="font-size:10px;color:var(--text3);">XP</div></div>
-                <div style="width:0.5px;background:var(--border);"></div>
-                <div style="text-align:center;"><div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text);">8</div><div style="font-size:10px;color:var(--text3);">Kurslar</div></div>
-                <div style="width:0.5px;background:var(--border);"></div>
-                <div style="text-align:center;"><div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text);">3</div><div style="font-size:10px;color:var(--text3);">Sertifikat</div></div>
-              </div>
-            </div>
-          </div>
-          <div class="section-card">
-            <div class="section-title" style="margin-bottom:1rem;">Sertifikatlarim</div>
-            <div class="course-item">
-              <div class="course-thumb" style="background:rgba(212,175,55,0.12);">🏆</div>
-              <div class="course-info">
-                <div class="course-name">CSS Asoslari</div>
-                <div class="course-meta"><span style="color:var(--green);">Tasdiqlangan</span><span style="color:var(--gold);cursor:pointer;">Yuklab olish</span></div>
-              </div>
-            </div>
-            <div class="course-item">
-              <div class="course-thumb" style="background:rgba(212,175,55,0.12);">🏆</div>
-              <div class="course-info">
-                <div class="course-name">HTML Pro kurs</div>
-                <div class="course-meta"><span style="color:var(--green);">Tasdiqlangan</span><span style="color:var(--gold);cursor:pointer;">Yuklab olish</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
+    <p class="loader-text">Bilimchi yuklanmoqda...</p>
 </div>
+
+<div id="startScreen">
+    <div class="auth-card">
+        <h1>Bilimchi</h1>
+        <p>O'rganishni yangi darajaga olib chiqing.</p>
+        <div class="input-group">
+            <label>Ismingiz</label>
+            <input type="text" id="nameInput" placeholder="Ism">
+        </div>
+        <div class="input-group">
+            <label>Familiyangiz</label>
+            <input type="text" id="surnameInput" placeholder="Familiya">
+        </div>
+        <button class="btn-black" onclick="launchApp()">Boshlash</button>
+    </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+<div id="sidebar">
+    <img id="sideAvatar" src="" style="width:60px; border-radius:15px; margin-bottom:15px;">
+    <h2 id="sideName">Foydalanuvchi</h2>
+    <p id="sideId" style="color:gray; font-size:12px; margin-bottom:30px;"></p>
+    <div style="display:grid; gap:10px;">
+        <div onclick="switchTab('home', 0)" style="padding:15px; background:#f5f5f7; border-radius:12px;">🏠 Bosh sahifa</div>
+        <div onclick="switchTab('lessons', 1)" style="padding:15px; border-radius:12px;">📚 Darsliklar</div>
+        <div onclick="switchTab('premium', 3)" style="padding:15px; color:blue;">💎 Premium</div>
+    </div>
+</div>
+
+<div id="mainApp">
+    <div class="app-header">
+        <div onclick="toggleMenu()">⚡</div>
+        <div style="font-weight:800;">BILIMCHI</div>
+        <div>👤</div>
+    </div>
+
+    <div id="content">
+        <div id="homeTab" class="tab-content">
+            <div class="container">
+                <h2>Salom, <span id="welcomeUser">Aziz</span>! 👋</h2>
+                <div class="card" style="background:#000; color:#fff; margin-top:15px;">
+                    <p style="opacity:0.6; font-size:12px;">Reyting</p>
+                    <h3>Top 10% 🏆</h3>
+                </div>
+                <div class="grid-2" style="margin-top:20px;">
+                    <div class="card" onclick="switchTab('lessons', 1)">📖<br>Darslar</div>
+                    <div class="card" onclick="switchTab('games', 2)">🎯<br>O'yinlar</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="lessonsTab" class="tab-content" style="display:none;">
+            <div class="container">
+                <h2 class="section-header">Darsliklar</h2>
+                <div class="card">🇷🇺 Rus tili (A1)</div>
+                <div class="card">🇺🇸 Ingliz tili (IELTS)</div>
+            </div>
+        </div>
+
+        <div id="gamesTab" class="tab-content" style="display:none;">
+            <div class="container">
+                <h2 class="section-header">O'yinlar</h2>
+                <div class="card">✅ Mavzuli Quiz</div>
+                <div class="card" style="background:#fff9e6; border:1px solid gold;">💎 Duel 1vs1</div>
+            </div>
+        </div>
+
+        <div id="premiumTab" class="tab-content" style="display:none;">
+            <div class="container" style="text-align:center;">
+                <h2>Premium 👑</h2>
+                <div class="card" style="margin-top:20px; border:2px solid #000;">
+                    <h1>29 000 UZS</h1>
+                    <button class="btn-black" style="margin-top:15px;">Sotib olish</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="#" class="nav-link active" onclick="switchTab('home', 0)">🏠</a>
+        <a href="#" class="nav-link" onclick="switchTab('lessons', 1)">📚</a>
+        <a href="#" class="nav-link" onclick="switchTab('games', 2)">🎯</a>
+        <a href="#" class="nav-link" onclick="switchTab('premium', 3)">💎</a>
+    </div>
 </div>
 
 <script>
-let isLight=false;
-function toggleTheme(){
-  isLight=!isLight;
-  document.body.classList.toggle('light',isLight);
-  document.querySelector('.theme-toggle').textContent=isLight?"Qorong'i":"Yorug'";
-}
-function toggleSidebar(){
-  document.getElementById('sidebar').classList.toggle('collapsed');
-}
-function toggleNotif(){
-  document.getElementById('notifPanel').classList.toggle('open');
-}
-document.addEventListener('click',function(e){
-  const p=document.getElementById('notifPanel');
-  if(!e.target.closest('.notif-btn')&&!e.target.closest('.notif-panel'))p.classList.remove('open');
-});
-function toggleTask(el){
-  const isDone=el.classList.toggle('done');
-  const txt=el.parentElement.querySelector('.task-text');
-  if(isDone){
-    el.innerHTML='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
-    txt.classList.add('done');
-  } else {
-    el.innerHTML='';
-    txt.classList.remove('done');
-  }
-}
-function showScreen(name,el){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('screen-'+name).classList.add('active');
-  if(el)el.classList.add('active');
-  const titles={dashboard:'Dashboard',kurslar:'Kurslarim',oyinlar:"O'yinlar",tasks:'Topshiriqlar',chat:'Chat',leaderboard:'Leaderboard',ai:'Bilimchi AI',profil:'Profil'};
-  document.getElementById('pageTitle').textContent=titles[name]||name;
-}
+    let tg = window.Telegram.WebApp;
+    tg.expand(); // Appni to'liq ekranga yoyish
+
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            document.getElementById('loader').style.transform = 'translateY(-100%)';
+        }, 2500);
+    });
+
+    function launchApp() {
+        const name = document.getElementById('nameInput').value.trim();
+        const surname = document.getElementById('surnameInput').value.trim();
+
+        if(!name || !surname) {
+            alert('Iltimos, ism va familiyangizni kiriting!');
+            return;
+        }
+
+        // MA'LUMOTNI BOTGA YUBORISH (Lekin yopilmaydi)
+        tg.sendData(JSON.stringify({name: name, surname: surname}));
+
+        document.getElementById('welcomeUser').innerText = name;
+        document.getElementById('sideName').innerText = name + ' ' + surname;
+        document.getElementById('sideAvatar').src = `https://ui-avatars.com/api/?name=${name}+${surname}&background=6366f1&color=fff`;
+
+        document.getElementById('startScreen').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+    }
+
+    function switchTab(tabId, index) {
+        document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+        document.getElementById(tabId + 'Tab').style.display = 'block';
+        
+        const links = document.querySelectorAll('.nav-link');
+        links.forEach(l => l.classList.remove('active'));
+        links[index].classList.add('active');
+
+        if(document.getElementById('sidebar').classList.contains('active')) toggleMenu();
+    }
+
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('active');
+        document.getElementById('overlay').style.display = 
+            (document.getElementById('overlay').style.display === 'block') ? 'none' : 'block';
+    }
 </script>
+</body>
+</html>
