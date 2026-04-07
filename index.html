@@ -275,7 +275,13 @@
 </div>
 
 <script>
-    // Theme Logic
+ <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+    // 1. Telegram API init
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    // 2. Theme Logic
     function toggleTheme() {
         const body = document.body;
         const currentTheme = body.getAttribute('data-theme');
@@ -287,17 +293,13 @@
         const headerBtn = document.getElementById('headerThemeBtn');
         
         if(newTheme === 'dark') {
-            icon.innerText = '☀️';
-            text.innerText = 'Kunduzgi rejim';
-            headerBtn.innerText = '☀️';
+            icon.innerText = '☀️'; text.innerText = 'Kunduzgi rejim'; headerBtn.innerText = '☀️';
         } else {
-            icon.innerText = '🌙';
-            text.innerText = 'Tungi rejim';
-            headerBtn.innerText = '🌙';
+            icon.innerText = '🌙'; text.innerText = 'Tungi rejim'; headerBtn.innerText = '🌙';
         }
     }
 
-    // Loader Logic
+    // 3. Loader Logic
     window.addEventListener('load', () => {
         setTimeout(() => {
             const loader = document.getElementById('loader');
@@ -306,71 +308,56 @@
         }, 2600);
     });
 
-    // Launch App
+    // 4. Launch App (BOTGA ULANGAN VARIANT)
     function launchApp() {
         const name = document.getElementById('nameInput').value.trim();
         const surname = document.getElementById('surnameInput').value.trim();
-        if(!name || !surname) { alert('Iltimos kiriting!'); return; }
 
+        if(!name || !surname) {
+            alert('Iltimos, ism va familiyani kiriting!');
+            return;
+        }
+
+        // Ma'lumotni JSON holatiga keltirish
+        const userData = {
+            name: name,
+            surname: surname,
+            action: 'registration'
+        };
+
+        // UI ni yangilash
         document.getElementById('welcomeUser').innerText = name;
         document.getElementById('sideName').innerText = name + ' ' + surname;
         document.getElementById('sideAvatar').src = `https://ui-avatars.com/api/?name=${name}+${surname}&background=6366f1&color=fff&bold=true`;
         document.getElementById('startScreen').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
+
+        // Telegram Botga yuborish
+        tg.sendData(JSON.stringify(userData));
     }
 
-    // Tab System
+    // 5. Tab System
     function switchTab(tabId, index) {
         const tabs = document.querySelectorAll('.tab-content');
         tabs.forEach(t => t.style.display = 'none');
         document.getElementById(tabId + 'Tab').style.display = 'block';
+        
         const links = document.querySelectorAll('.nav-link');
         links.forEach(l => l.classList.remove('active'));
         links[index].classList.add('active');
+        
         if(document.getElementById('sidebar').classList.contains('active')) toggleMenu();
     }
 
-    // Sidebar Toggle
+    // 6. Sidebar Toggle
     function toggleMenu() {
         document.getElementById('sidebar').classList.toggle('active');
         const overlay = document.getElementById('overlay');
         overlay.style.display = (overlay.style.display === 'block') ? 'none' : 'block';
     }
-</script><script src="https://telegram.org/js/telegram-web-app.js"></script> <script>
-        // 2. TELEGRAM API NI ISHGA TUSHIRISH
-        const tg = window.Telegram.WebApp;
-        tg.expand(); 
-
-        // 3. YANGILANGAN FUNKSIYA
-        function launchApp() {
-            const name = document.getElementById('nameInput').value.trim();
-            const surname = document.getElementById('surnameInput').value.trim();
-
-            if(!name || !surname) {
-                alert('Iltimos, ism va familiyani kiriting!');
-                return;
-            }
-
-            // BOTGA MA'LUMOT YUBORISH
-            const userData = {
-                name: name,
-                surname: surname,
-                action: 'registration'
-            };
-
-            // Ma'lumotni Telegram botga yuborish
-            tg.sendData(JSON.stringify(userData)); 
-            
-            // UI ni yangilash (Ilova ichida ism ko'rinishi uchun)
-            document.getElementById('welcomeUser').innerText = name;
-            document.getElementById('startScreen').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
-            
-            // Agar ma'lumot yuborilgach WebApp yopilishi kerak bo'lsa:
-            // tg.close(); 
-        }
-
-        // Qolgan loader va tab almashtirish kodlaringiz shu yerda davom etadi...
+</script>
+</body>
+</html>
     </script>
 </body>
 </html>
