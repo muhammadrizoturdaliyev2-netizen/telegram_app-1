@@ -1,196 +1,204 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Bilimchi Pro LMS</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        :root { --p: #6366f1; --bg: #f8f9fa; --txt: #1d1d1f; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; }
-        body { background: var(--bg); color: var(--txt); }
-        
-        /* Loader */
-        #loader { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.5s; }
-        .bar { width: 200px; height: 4px; background: #333; border-radius: 10px; overflow: hidden; }
-        .fill { width: 0%; height: 100%; background: #fff; animation: f 2s forwards; }
-        @keyframes f { to { width: 100%; } }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LMS Premium</title>
 
-        /* Layout */
-        .container { padding: 20px; }
-        .card { background: #fff; padding: 18px; border-radius: 20px; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); cursor: pointer; transition: 0.2s; position: relative; }
-        .card.locked { opacity: 0.6; filter: grayscale(1); cursor: not-allowed; }
-        .card:active { transform: scale(0.98); }
-        
-        .btn { width: 100%; padding: 16px; border-radius: 14px; border: none; font-weight: 600; cursor: pointer; margin-top: 10px; }
-        .btn-p { background: var(--p); color: #fff; }
-        .btn-dark { background: #000; color: #fff; }
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
 
-        /* Modals */
-        .modal { display: none; position: fixed; inset: 0; background: #fff; z-index: 2000; overflow-y: auto; padding: 20px; }
-        .video-wrap { position: relative; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 15px; overflow: hidden; }
-        .video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; }
+body{
+  background:linear-gradient(135deg,#0f172a,#1e3a8a);
+  color:white;
+  overflow:hidden;
+}
 
-        /* Tabs */
-        .nav { position: fixed; bottom: 20px; left: 5%; width: 90%; background: #000; padding: 12px; border-radius: 20px; display: flex; justify-content: space-around; z-index: 1000; }
-        .nav b { color: #888; font-size: 20px; cursor: pointer; }
-        .nav b.active { color: #fff; }
-        
-        /* Admin Section */
-        .admin-input { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; }
-    </style>
+/* SCREEN */
+.screen{display:none;height:100vh;padding:20px}
+.active{display:block}
+
+/* LOADER */
+.loader{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:20px;
+}
+
+.loader img{
+  width:200px;
+  border-radius:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+
+.bar{
+  width:200px;height:12px;
+  background:rgba(255,255,255,0.1);
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.fill{
+  width:0%;
+  height:100%;
+  background:linear-gradient(90deg,#a855f7,#06b6d4);
+  animation:load 3s forwards;
+}
+
+@keyframes load{
+  to{width:100%}
+}
+
+/* HEADER */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:30px;
+}
+
+.icon{
+  font-size:22px;
+  cursor:pointer;
+}
+
+/* CARDS */
+.grid{
+  display:flex;
+  gap:10px;
+}
+
+.card{
+  flex:1;
+  height:100px;
+  background:linear-gradient(135deg,#1e40af,#9333ea);
+  border-radius:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:30px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+  transition:0.3s;
+}
+
+.card:hover{
+  transform:scale(1.05);
+}
+
+/* GAMES LIST */
+.game{
+  height:60px;
+  margin-bottom:15px;
+  border-radius:15px;
+  background:linear-gradient(135deg,#1e40af,#9333ea);
+  box-shadow:0 8px 20px rgba(0,0,0,0.3);
+  display:flex;
+  align-items:center;
+  padding-left:15px;
+  transition:0.3s;
+}
+
+.game:hover{
+  transform:translateY(-3px);
+}
+
+/* NAV */
+.nav{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  width:90%;
+  height:65px;
+  background:rgba(255,255,255,0.1);
+  backdrop-filter:blur(10px);
+  border-radius:30px;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+}
+
+.nav div{
+  font-size:22px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.nav div.active{
+  transform:scale(1.2);
+}
+</style>
 </head>
+
 <body>
 
-<div id="loader"><div class="bar"><div class="fill"></div></div></div>
-
-<div id="authScreen" class="container" style="padding-top: 100px;">
-    <h1>Bilimchi LMS</h1>
-    <p style="margin-bottom:30px; color:gray;">Ismingizni kiriting:</p>
-    <input type="text" id="uName" class="admin-input" placeholder="Ism">
-    <button class="btn btn-dark" onclick="login()">Kirish</button>
+<!-- LOADER -->
+<div class="screen active loader" id="loader">
+  <img src="https://i.imgur.com/6VBx3io.png">
+  <div>Loading...</div>
+  <div class="bar"><div class="fill"></div></div>
 </div>
 
-<div id="app" style="display:none; padding-bottom: 100px;">
-    <div class="container" id="homeTab">
-        <h2 id="greet">Salom!</h2>
-        <div class="card" style="background:var(--p); color:#fff; margin-top:20px;">
-            <p>Sizning darajangiz:</p>
-            <h3 id="userLv">1-bosqich</h3>
-        </div>
-        <h3 style="margin: 20px 0 10px;">Darslar:</h3>
-        <div id="lessonsList"></div>
-    </div>
+<!-- HOME -->
+<div class="screen" id="home">
 
-    <div class="container" id="adminTab" style="display:none;">
-        <h2>Admin Panel</h2>
-        <div class="card">
-            <h4>Yangi dars qo'shish</h4>
-            <input type="text" id="lessonTitle" class="admin-input" placeholder="Dars nomi">
-            <input type="text" id="lessonVid" class="admin-input" placeholder="YouTube Video ID">
-            <input type="text" id="lessonQuiz" class="admin-input" placeholder="Savol|Javob1,Javob2|0">
-            <p style="font-size:10px; color:gray;">Format: Savol|Variant1,Variant2|To'g'riIndex</p>
-            <button class="btn btn-p" onclick="addLesson()">Qo'shish</button>
-        </div>
-        <button class="btn btn-dark" onclick="clearProgress()">Progressni tozalash</button>
-    </div>
+  <div class="header">
+    <div class="icon">☰</div>
+    <div>👤</div>
+    <div>🔔</div>
+  </div>
 
-    <div class="nav">
-        <b onclick="showTab('home')" id="hBtn" class="active">🏠</b>
-        <b onclick="showTab('admin')" id="aBtn">⚙️</b>
+  <div class="grid">
+    <div class="card">📚</div>
+    <div style="display:flex;flex-direction:column;gap:10px;flex:1">
+      <div class="card">💎</div>
+      <div class="card">📊</div>
     </div>
+  </div>
+
 </div>
 
-<div id="vModal" class="modal">
-    <button onclick="closeV()" style="float:right; padding:10px;">❌ Yopish</button>
-    <h3 id="vTitle" style="margin-bottom:15px;">Dars</h3>
-    <div class="video-wrap"><iframe id="vFrame" src="" frameborder="0" allowfullscreen></iframe></div>
-    <div id="quizBox" style="margin-top:20px; display:none;">
-        <hr><br>
-        <h4>Dars yuzasidan test:</h4>
-        <div id="qArea"></div>
-        <button class="btn btn-dark" onclick="checkQuiz()">Tekshirish</button>
-    </div>
-    <button id="showQuizBtn" class="btn btn-p" onclick="openQuiz()" style="margin-top:20px;">Videoni ko'rdim, testni boshlash</button>
+<!-- GAMES -->
+<div class="screen" id="games">
+
+  <h2>Games</h2>
+
+  <div class="game">🎮 Quiz</div>
+  <div class="game">⚔️ Battle</div>
+  <div class="game">⏱ Speed</div>
+  <div class="game">🧠 Logic</div>
+  <div class="game">👑 Boss</div>
+
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <div onclick="openScreen('home',this)" class="active">🏠</div>
+  <div onclick="openScreen('games',this)">🎮</div>
+  <div>📚</div>
+  <div>💎</div>
 </div>
 
 <script>
-    let tg = window.Telegram.WebApp; tg.expand();
-    let lessons = JSON.parse(localStorage.getItem('lms_lessons')) || [
-        {id:1, t:"Rus tili: Alifbo", v:"ZrxI-Q6oT_c", q:"Alifboda nechta harf bor?|33,30,25|0"}
-    ];
-    let progress = localStorage.getItem('lms_progress') || 1;
 
-    window.onload = () => { 
-        setTimeout(() => document.getElementById('loader').style.transform = 'translateY(-100%)', 2000);
-        renderLessons();
-    };
+// LOADER → HOME
+setTimeout(()=>{
+  document.getElementById("loader").classList.remove("active");
+  document.getElementById("home").classList.add("active");
+},3000);
 
-    function login() {
-        let n = document.getElementById('uName').value;
-        if(!n) return;
-        document.getElementById('greet').innerText = `Salom, ${n}! 👋`;
-        document.getElementById('authScreen').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-    }
+// SCREEN SWITCH
+function openScreen(id,el){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 
-    function renderLessons() {
-        let html = '';
-        lessons.forEach(l => {
-            let isLocked = l.id > progress;
-            html += `<div class="card ${isLocked ? 'locked' : ''}" onclick="openL(${l.id})">
-                <b>${l.id}. ${l.t}</b>
-                <span style="float:right">${isLocked ? '🔒' : '▶️'}</span>
-            </div>`;
-        });
-        document.getElementById('lessonsList').innerHTML = html;
-        document.getElementById('userLv').innerText = `${progress}-bosqich o'quvchisi`;
-    }
+  document.querySelectorAll(".nav div").forEach(i=>i.classList.remove("active"));
+  el.classList.add("active");
+}
 
-    let activeL = null;
-    function openL(id) {
-        if(id > progress) return alert("Avvalgi darsni tugating!");
-        activeL = lessons.find(x => x.id == id);
-        document.getElementById('vTitle').innerText = activeL.t;
-        document.getElementById('vFrame').src = `https://www.youtube.com/embed/${activeL.v}`;
-        document.getElementById('vModal').style.display = 'block';
-        document.getElementById('quizBox').style.display = 'none';
-        document.getElementById('showQuizBtn').style.display = 'block';
-    }
-
-    function openQuiz() {
-        document.getElementById('showQuizBtn').style.display = 'none';
-        document.getElementById('quizBox').style.display = 'block';
-        let parts = activeL.q.split('|');
-        let opts = parts[1].split(',');
-        let qHtml = `<p><b>${parts[0]}</b></p><br>`;
-        opts.forEach((o, i) => {
-            qHtml += `<label><input type="radio" name="qz" value="${i}"> ${o}</label><br><br>`;
-        });
-        document.getElementById('qArea').innerHTML = qHtml;
-    }
-
-    function checkQuiz() {
-        let sel = document.querySelector('input[name="qz"]:checked');
-        if(!sel) return alert("Javobni tanlang!");
-        let correct = activeL.q.split('|')[2];
-        if(sel.value == correct) {
-            alert("To'g'ri! Keyingi dars ochildi.");
-            if(activeL.id == progress) {
-                progress++;
-                localStorage.setItem('lms_progress', progress);
-            }
-            closeV();
-            renderLessons();
-        } else {
-            alert("Xato! Videoni qayta ko'ring.");
-        }
-    }
-
-    function closeV() { 
-        document.getElementById('vModal').style.display = 'none'; 
-        document.getElementById('vFrame').src = "";
-    }
-
-    function showTab(t) {
-        document.getElementById('homeTab').style.display = t=='home'?'block':'none';
-        document.getElementById('adminTab').style.display = t=='admin'?'block':'none';
-        document.getElementById('hBtn').className = t=='home'?'active':'';
-        document.getElementById('aBtn').className = t=='admin'?'active':'';
-    }
-
-    function addLesson() {
-        let t = document.getElementById('lessonTitle').value;
-        let v = document.getElementById('lessonVid').value;
-        let q = document.getElementById('lessonQuiz').value;
-        if(!t || !v || !q) return alert("Hammasini to'ldiring!");
-        lessons.push({id: lessons.length + 1, t, v, q});
-        localStorage.setItem('lms_lessons', JSON.stringify(lessons));
-        renderLessons();
-        alert("Dars qo'shildi!");
-    }
-
-    function clearProgress() { localStorage.removeItem('lms_progress'); location.reload(); }
 </script>
+
 </body>
 </html>
