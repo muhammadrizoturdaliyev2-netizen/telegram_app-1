@@ -11,6 +11,7 @@
 body{
   font-family:-apple-system,BlinkMacSystemFont,sans-serif;
   background:linear-gradient(180deg,#f8fafc,#eef2ff);
+  color:#111827;
   overflow-x:hidden;
 }
 
@@ -26,44 +27,68 @@ body{
   align-items:center;
   z-index:999;
 }
+
 .loader-img{
   width:100%;
   height:60%;
   background:url('loading.jpg') center/cover no-repeat;
 }
-.loader-text{text-align:center;padding:20px;}
+
+.loader-text{
+  text-align:center;
+  padding:20px;
+}
+
 .circle{
   width:40px;height:40px;
   border:4px solid #ddd;
   border-top:4px solid #6366f1;
   border-radius:50%;
   animation:spin 1s linear infinite;
+  margin-top:15px;
 }
+
 @keyframes spin{100%{transform:rotate(360deg)}}
 
 /* START */
 .start{
-  display:none;height:100vh;
-  justify-content:center;align-items:center;
+  display:none;
+  height:100vh;
+  justify-content:center;
+  align-items:center;
 }
+
 .start-box{
-  width:90%;max-width:350px;
-  background:white;padding:25px;
+  width:90%;
+  max-width:350px;
+  background:white;
+  padding:25px;
   border-radius:20px;
   box-shadow:0 10px 30px rgba(0,0,0,0.1);
-  display:flex;flex-direction:column;gap:15px;
+  display:flex;
+  flex-direction:column;
+  gap:15px;
   text-align:center;
 }
+
 .start-box input{
-  padding:14px;border-radius:12px;border:1px solid #ddd;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid #ddd;
 }
+
 .start-box button{
-  padding:14px;border:none;border-radius:12px;
+  padding:14px;
+  border:none;
+  border-radius:12px;
   background:linear-gradient(135deg,#6366f1,#8b5cf6);
   color:white;
 }
+
+/* MINI LOADER */
 .mini-loader{
-  width:30px;height:30px;
+  width:30px;
+  height:30px;
   border:3px solid #ddd;
   border-top:3px solid #6366f1;
   border-radius:50%;
@@ -75,22 +100,34 @@ body{
 .main{display:none;padding-bottom:120px}
 
 /* HEADER */
-.header{display:flex;justify-content:space-between;padding:18px}
+.header{
+  display:flex;
+  justify-content:space-between;
+  padding:18px;
+}
 
 /* SIDEBAR */
 .sidebar{
-  position:fixed;left:-260px;top:0;
-  width:260px;height:100%;
-  background:white;padding:20px;
-  transition:0.3s;z-index:1000;
+  position:fixed;
+  left:-260px;
+  top:0;
+  width:260px;
+  height:100%;
+  background:white;
+  padding:20px;
+  transition:0.3s;
+  z-index:1000;
 }
 .sidebar.active{left:0}
 
 /* OVERLAY */
 .overlay{
-  position:fixed;width:100%;height:100%;
+  position:fixed;
+  width:100%;
+  height:100%;
   background:rgba(0,0,0,0.3);
-  display:none;z-index:900;
+  display:none;
+  z-index:900;
 }
 .overlay.active{display:block}
 
@@ -98,53 +135,87 @@ body{
 .user{text-align:center;margin-bottom:20px}
 .user img{width:70px;height:70px;border-radius:50%}
 
-/* QUICK */
-.quick{display:flex;gap:12px;padding:0 20px}
-.big{
-  flex:1;height:140px;
-  background:linear-gradient(135deg,#6366f1,#8b5cf6);
-  color:white;border-radius:22px;
-  display:flex;align-items:center;justify-content:center;
+/* MENU */
+.menu-item{
+  padding:14px 0;
+  border-bottom:1px solid #eee;
 }
-.column{flex:1;display:flex;flex-direction:column;gap:12px}
+
+/* QUICK */
+.quick{
+  display:flex;
+  gap:12px;
+  padding:0 20px;
+}
+
+.big{
+  flex:1;
+  height:140px;
+  background:linear-gradient(135deg,#6366f1,#8b5cf6);
+  color:white;
+  border-radius:22px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.column{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
 .small{
-  flex:1;background:linear-gradient(135deg,#7c3aed,#a78bfa);
-  color:white;border-radius:22px;
-  display:flex;align-items:center;justify-content:center;
+  flex:1;
+  background:linear-gradient(135deg,#7c3aed,#a78bfa);
+  color:white;
+  border-radius:22px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
 /* CARD */
 .card{
-  margin:20px;padding:20px;border-radius:20px;background:white;
+  margin:20px;
+  padding:22px;
+  border-radius:22px;
+  background:white;
+}
+
+/* PREMIUM */
+.premium{
+  background:linear-gradient(135deg,#7c3aed,#a78bfa);
+  color:white;
 }
 
 /* PREMIUM BTN */
 .premium-btn{
-  margin:0 20px;padding:15px;border-radius:20px;
+  margin:0 20px;
+  padding:16px;
+  border-radius:20px;
+  text-align:center;
   background:linear-gradient(135deg,#f59e0b,#fbbf24);
-  color:white;text-align:center;
+  color:white;
 }
 
 /* NAV */
 .nav{
-  position:fixed;bottom:25px;left:50%;
+  position:fixed;
+  bottom:25px;
+  left:50%;
   transform:translateX(-50%);
-  width:94%;background:white;border-radius:35px;
-  display:flex;justify-content:space-around;
+  width:94%;
+  background:white;
+  border-radius:35px;
+  display:flex;
+  justify-content:space-around;
   padding:18px;
 }
-.nav div{font-size:22px}
 
-/* GAME */
-.game-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
-.game-card{
-  padding:18px;border-radius:22px;color:white;
-  text-align:center;position:relative;
-}
-.free{background:linear-gradient(135deg,#10b981,#34d399)}
-.locked{background:linear-gradient(135deg,#6366f1,#8b5cf6)}
-.locked::after{
-  content:"🔒";position:absolute;top:10px;right:12px;
+.nav div{
+  font-size:22px;
 }
 </style>
 </head>
@@ -169,15 +240,20 @@ body{
     <input id="surnameInput" placeholder="Familiyangiz">
     <button onclick="startApp(event)">Boshlash</button>
   </div>
-</div>
+</div><!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeMenu()"></div>
 
-<div class="overlay" id="overlay" onclick="closeMenu()"></div><!-- SIDEBAR -->
+<!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
   <div class="user">
     <img id="avatar">
     <h3 id="username"></h3>
     <p id="userid"></p>
   </div>
+
+  <div class="menu-item">🎮 O‘yinlar</div>
+  <div class="menu-item">📚 Darslar</div>
+  <div class="menu-item">💎 Premium</div>
 </div>
 
 <!-- MAIN -->
@@ -191,8 +267,10 @@ body{
 
 <!-- HOME -->
 <div id="homeScreen">
+
   <div class="quick">
     <div class="big" onclick="show('games')">🎮 O‘yinlar</div>
+
     <div class="column">
       <div class="small" onclick="show('lesson')">📚 Darslar</div>
       <div class="small" onclick="show('results')">🏆 Natija</div>
@@ -200,25 +278,23 @@ body{
   </div>
 
   <div class="card">🌟 Juda yaxshi! davom eting</div>
-  <div class="premium-btn" onclick="show('premium')">💎 Premium olish</div>
-</div>
 
-<!-- GAMES -->
-<div id="gamesScreen" style="display:none;padding:20px;">
-  <h2>🎮 O‘yinlar</h2>
-  <div class="game-grid">
-    <div class="game-card free" onclick="show('battle')">🧠 Quiz</div>
-    <div class="game-card locked">⚔️ Battle</div>
-    <div class="game-card locked">⚡ Tezkor</div>
-    <div class="game-card locked">🧩 Matching</div>
-    <div class="game-card locked">🔥 Boss</div>
+  <div class="card premium">
+    💎 Premium orqali barcha imkoniyatlardan foydalanishingiz mumkin
   </div>
+
+  <div class="premium-btn" onclick="show('premium')">
+    💎 Premium olish
+  </div>
+
 </div>
 
-<!-- LESSON -->
+<!-- DARS -->
 <div id="lessonScreen" style="display:none;padding:20px;">
   <h2>📚 Darslar</h2>
-  <div class="card" onclick="openLesson('html')">HTML</div>
+
+  <div class="card" onclick="openLesson('html')">HTML asoslari</div>
+  <div class="card" onclick="openLesson('css')">CSS asoslari</div>
 </div>
 
 <div id="lessonView" style="display:none;padding:20px;">
@@ -226,20 +302,10 @@ body{
   <p id="lessonText"></p>
 </div>
 
-<!-- BATTLE -->
-<div id="battleScreen" style="display:none;padding:20px;">
-  <h2>⚔️ Battle</h2>
-  <button onclick="startBattle()">Boshlash</button>
-  <h3 id="qText"></h3>
-  <div onclick="answer(0)">A</div>
-  <div onclick="answer(1)">B</div>
-  <div onclick="answer(2)">C</div>
-  <div onclick="answer(3)">D</div>
-</div>
-
-<!-- OTHER -->
-<div id="resultsScreen" style="display:none;padding:20px;">Natija</div>
-<div id="premiumScreen" style="display:none;padding:20px;">Premium</div>
+<!-- SCREENS -->
+<div id="gamesScreen" style="display:none;padding:20px;">🎮 O‘yinlar</div>
+<div id="resultsScreen" style="display:none;padding:20px;">🏆 Natijalar</div>
+<div id="premiumScreen" style="display:none;padding:20px;">💎 Premium</div>
 
 <!-- NAV -->
 <div class="nav">
@@ -247,50 +313,72 @@ body{
   <div onclick="show('games')">🎮</div>
   <div onclick="show('lesson')">📚</div>
   <div onclick="show('results')">🏆</div>
+  <div onclick="show('premium')">💎</div>
 </div>
 
 </div>
 
 <script>
 
-setTimeout(()=>{loader.style.display="none";start.style.display="flex"},3000);
+setTimeout(()=>{
+  loader.style.display="none";
+  start.style.display="flex";
+},3000);
 
 function startApp(e){
-let name=nameInput.value,surname=surnameInput.value;
-e.target.innerHTML='<div class="mini-loader"></div>';
-setTimeout(()=>{
-username.innerText=name+" "+surname;
-avatar.src="https://ui-avatars.com/api/?name="+name;
-start.style.display="none";main.style.display="block";
-},1500);
+  let name=nameInput.value;
+  let surname=surnameInput.value;
+
+  if(!name||!surname){alert("Ism kiriting");return;}
+
+  e.target.innerHTML='<div class="mini-loader"></div>';
+
+  setTimeout(()=>{
+    let id=Math.floor(Math.random()*100000);
+    username.innerText=name+" "+surname;
+    userid.innerText="ID: "+id;
+    avatar.src="https://ui-avatars.com/api/?name="+name+"+"+surname;
+
+    start.style.display="none";
+    main.style.display="block";
+  },1500);
 }
 
 function toggleMenu(){
-sidebar.classList.toggle("active");
-overlay.classList.toggle("active");
+  sidebar.classList.toggle("active");
+  overlay.classList.toggle("active");
 }
+
 function closeMenu(){
-sidebar.classList.remove("active");
-overlay.classList.remove("active");
+  sidebar.classList.remove("active");
+  overlay.classList.remove("active");
 }
 
 function show(screen){
-["home","games","lesson","lessonView","battle","results","premium"]
-.forEach(id=>document.getElementById(id+"Screen")?.style.display="none");
+  homeScreen.style.display="none";
+  gamesScreen.style.display="none";
+  lessonScreen.style.display="none";
+  lessonView.style.display="none";
+  resultsScreen.style.display="none";
+  premiumScreen.style.display="none";
 
-document.getElementById(screen+"Screen").style.display="block";
+  document.getElementById(screen+"Screen").style.display="block";
 }
 
-function openLesson(){
-lessonScreen.style.display="none";
-lessonView.style.display="block";
-lessonTitle.innerText="HTML";
-lessonText.innerText="HTML asoslari...";
-}
+function openLesson(type){
+  lessonScreen.style.display="none";
+  lessonView.style.display="block";
 
-let q=["HTML nima?"];
-function startBattle(){qText.innerText=q[0]}
-function answer(){alert("javob")}
+  if(type==="html"){
+    lessonTitle.innerText="HTML asoslari";
+    lessonText.innerText="HTML bu web sahifa yaratish uchun ishlatiladi...";
+  }
+
+  if(type==="css"){
+    lessonTitle.innerText="CSS asoslari";
+    lessonText.innerText="CSS bu dizayn berish uchun ishlatiladi...";
+  }
+}
 
 </script>
 
