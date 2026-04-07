@@ -9,8 +9,8 @@
 *{margin:0;padding:0;box-sizing:border-box}
 
 body{
-  font-family:sans-serif;
-  background:#f6f7fb;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  background:linear-gradient(180deg,#f8fafc,#eef2ff);
   overflow-x:hidden;
 }
 
@@ -19,12 +19,23 @@ body{
   position:fixed;
   width:100%;
   height:100%;
-  background:#f6f7fb;
+  background:#f8fafc;
   display:flex;
   flex-direction:column;
-  justify-content:center;
+  justify-content:space-between;
   align-items:center;
   z-index:999;
+}
+
+.loader-img{
+  width:100%;
+  height:60%;
+  background:url('loading.jpg') center/cover no-repeat;
+}
+
+.loader-text{
+  text-align:center;
+  padding:20px;
 }
 
 .circle{
@@ -51,6 +62,7 @@ body{
   background:white;
   padding:25px;
   border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.1);
   text-align:center;
 }
 
@@ -68,18 +80,18 @@ body{
   width:100%;
   border:none;
   border-radius:10px;
-  background:#6366f1;
+  background:linear-gradient(135deg,#6366f1,#8b5cf6);
   color:white;
 }
 
 /* MAIN */
-.main{display:none;padding-bottom:100px}
+.main{display:none;padding-bottom:120px}
 
 /* HEADER */
 .header{
   display:flex;
   justify-content:space-between;
-  padding:15px;
+  padding:18px;
 }
 
 /* SIDEBAR */
@@ -107,59 +119,100 @@ body{
 }
 .overlay.active{display:block}
 
+/* USER */
+.user{text-align:center;margin-bottom:20px}
+.user img{width:70px;height:70px;border-radius:50%}
+
 /* QUICK */
 .quick{
   display:flex;
-  gap:10px;
-  padding:20px;
-}
-
-.big, .small{
-  flex:1;
-  padding:20px;
-  border-radius:15px;
-  color:white;
-  text-align:center;
+  gap:12px;
+  padding:0 20px;
 }
 
 .big{
-  background:#6366f1;
+  flex:1;
+  height:140px;
+  background:linear-gradient(135deg,#6366f1,#8b5cf6);
+  color:white;
+  border-radius:22px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.column{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
 }
 
 .small{
-  background:#8b5cf6;
+  flex:1;
+  background:linear-gradient(135deg,#7c3aed,#a78bfa);
+  color:white;
+  border-radius:22px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
 /* CARD */
 .card{
   margin:20px;
   padding:20px;
+  border-radius:20px;
   background:white;
-  border-radius:15px;
 }
 
 /* NAV */
 .nav{
   position:fixed;
-  bottom:20px;
-  width:90%;
-  left:5%;
-  background:white;
-  border-radius:20px;
+  bottom:25px;
+  left:50%;
+  transform:translateX(-50%);
+  width:92%;
+  background:rgba(255,255,255,0.95);
+  border-radius:30px;
   display:flex;
   justify-content:space-around;
-  padding:15px;
+  padding:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.1);
+}
+
+.nav div{
+  font-size:22px;
+  padding:8px;
+  border-radius:10px;
+}
+
+.nav div:active{
+  transform:scale(1.2);
 }
 
 /* GAME */
-.game-card{
-  margin:10px 0;
-  padding:15px;
-  border-radius:15px;
-  color:white;
+.game-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
 }
+
+.game-card{
+  padding:18px;
+  border-radius:22px;
+  color:white;
+  text-align:center;
+}
+
 .free{background:#10b981}
 .locked{background:#6366f1}
+.locked::after{
+  content:"🔒";
+  position:absolute;
+  top:10px;
+  right:12px;
+}
 </style>
 </head>
 
@@ -167,16 +220,19 @@ body{
 
 <!-- LOADER -->
 <div class="loader" id="loader">
-  <div class="circle"></div>
-  <p>Yuklanmoqda...</p>
+  <div class="loader-img"></div>
+  <div class="loader-text">
+    <h2>Bilimchi tayyorlanmoqda</h2>
+    <p>Iltimos kuting...</p>
+    <div class="circle"></div>
+  </div>
 </div>
 
 <!-- START -->
 <div class="start" id="start">
   <div class="start-box">
-    <h3>Ismingizni kiriting</h3>
+    <h2>Xush kelibsiz 👋</h2>
     <input id="nameInput" placeholder="Ism">
-    <input id="surnameInput" placeholder="Familiya">
     <button onclick="startApp()">Boshlash</button>
   </div>
 </div>
@@ -185,10 +241,11 @@ body{
 
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
-  <h3 id="username"></h3>
-</div>
-
-<!-- MAIN -->
+  <div class="user">
+    <img id="avatar">
+    <h3 id="username"></h3>
+  </div>
+</div><!-- MAIN -->
 <div class="main" id="main">
 
 <div class="header">
@@ -198,46 +255,40 @@ body{
 
 <!-- HOME -->
 <div id="homeScreen">
-
-<div class="quick">
-  <div class="big" onclick="show('games')">🎮 O‘yinlar</div>
-  <div class="small" onclick="show('lesson')">📚 Darslar</div>
-  <div class="small" onclick="show('results')">🏆 Natija</div>
-</div>
-
-<div class="card">🌟 Juda yaxshi! davom eting</div>
-
+  <div class="quick">
+    <div class="big" onclick="show('games')">🎮</div>
+    <div class="column">
+      <div class="small" onclick="show('lesson')">📚</div>
+      <div class="small" onclick="show('results')">🏆</div>
+    </div>
+  </div>
 </div>
 
 <!-- GAMES -->
 <div id="gamesScreen" style="display:none;padding:20px;">
-  <h2>O‘yinlar</h2>
-
-  <div class="game-card free" onclick="show('battle')">Quiz (Free)</div>
-  <div class="game-card locked">Battle 🔒</div>
-  <div class="game-card locked">Speed 🔒</div>
-
+  <h2>🎮 O‘yinlar</h2>
+  <div class="game-grid">
+    <div class="game-card free" onclick="show('battle')">Quiz</div>
+    <div class="game-card locked">Battle</div>
+  </div>
 </div>
 
 <!-- LESSON -->
 <div id="lessonScreen" style="display:none;padding:20px;">
-  <h2>Darslar</h2>
   <div class="card" onclick="openLesson()">HTML</div>
 </div>
 
 <div id="lessonView" style="display:none;padding:20px;">
-  <h2>HTML</h2>
-  <p>HTML asoslari...</p>
-</div><!-- BATTLE -->
-<div id="battleScreen" style="display:none;padding:20px;">
-  <h2>Battle</h2>
-  <button onclick="startBattle()">Start</button>
-  <h3 id="qText"></h3>
-  <div onclick="answer(0)">A</div>
-  <div onclick="answer(1)">B</div>
+  HTML dars
 </div>
 
-<div id="resultsScreen" style="display:none;padding:20px;">Natijalar</div>
+<!-- BATTLE -->
+<div id="battleScreen" style="display:none;padding:20px;">
+  <button onclick="startBattle()">Start</button>
+  <h3 id="qText"></h3>
+</div>
+
+<div id="resultsScreen" style="display:none;padding:20px;">Natija</div>
 
 <!-- NAV -->
 <div class="nav">
@@ -250,56 +301,47 @@ body{
 
 <script>
 
-/* LOADER FIX */
 window.onload = function(){
   setTimeout(()=>{
-    document.getElementById("loader").style.display="none";
-    document.getElementById("start").style.display="flex";
+    loader.style.display="none";
+    start.style.display="flex";
   },3000);
 };
 
-/* START */
 function startApp(){
-  let name = document.getElementById("nameInput").value;
-  document.getElementById("username").innerText = name;
-  document.getElementById("start").style.display="none";
-  document.getElementById("main").style.display="block";
+  username.innerText = nameInput.value;
+  avatar.src = "https://ui-avatars.com/api/?name="+nameInput.value;
+  start.style.display="none";
+  main.style.display="block";
 }
 
-/* MENU */
 function toggleMenu(){
   sidebar.classList.toggle("active");
   overlay.classList.toggle("active");
 }
+
 function closeMenu(){
   sidebar.classList.remove("active");
   overlay.classList.remove("active");
 }
 
-/* SCREEN */
 function show(screen){
-  document.getElementById("homeScreen").style.display="none";
-  document.getElementById("gamesScreen").style.display="none";
-  document.getElementById("lessonScreen").style.display="none";
-  document.getElementById("lessonView").style.display="none";
-  document.getElementById("battleScreen").style.display="none";
-  document.getElementById("resultsScreen").style.display="none";
+  ["home","games","lesson","lessonView","battle","results"]
+  .forEach(id=>{
+    let el=document.getElementById(id+"Screen");
+    if(el) el.style.display="none";
+  });
 
   document.getElementById(screen+"Screen").style.display="block";
 }
 
-/* LESSON */
 function openLesson(){
-  document.getElementById("lessonScreen").style.display="none";
-  document.getElementById("lessonView").style.display="block";
+  lessonScreen.style.display="none";
+  lessonView.style.display="block";
 }
 
-/* BATTLE */
 function startBattle(){
-  document.getElementById("qText").innerText="HTML nima?";
-}
-function answer(){
-  alert("Javob tanlandi");
+  qText.innerText="HTML nima?";
 }
 
 </script>
