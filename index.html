@@ -2,213 +2,195 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Bilimchi - Ultimate Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Bilimchi Pro LMS</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root {
-            --primary: #6366f1;
-            --secondary: #8b5cf6;
-            --accent: #ff3b30;
-            --bg-color: #fcfcfd;
-            --card-shadow: 0 8px 30px rgba(0,0,0,0.04);
-            --fs-tiny: 11px; --fs-small: 13px; --fs-reg: 14px; --fs-title: 17px;
-        }
+        :root { --p: #6366f1; --bg: #f8f9fa; --txt: #1d1d1f; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, sans-serif; }
+        body { background: var(--bg); color: var(--txt); }
+        
+        /* Loader */
+        #loader { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.5s; }
+        .bar { width: 200px; height: 4px; background: #333; border-radius: 10px; overflow: hidden; }
+        .fill { width: 0%; height: 100%; background: #fff; animation: f 2s forwards; }
+        @keyframes f { to { width: 100%; } }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; letter-spacing: -0.2px; }
-        body { background: var(--bg-color); color: #1d1d1f; overflow-x: hidden; width: 100vw; height: 100vh; }
-
-        /* 1. LOADER */
-        #loader { position: fixed; inset: 0; background: #000; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 80px; align-items: center; z-index: 9999; transition: 0.8s cubic-bezier(0.8, 0, 0.2, 1); }
-        .loader-bar-container { width: 200px; height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 10px; overflow: hidden; }
-        .loader-bar-fill { width: 0%; height: 100%; background: #fff; box-shadow: 0 0 15px #fff; animation: fillProgress 2.5s ease-in-out forwards; }
-        @keyframes fillProgress { 0% { width: 0%; } 100% { width: 100%; } }
-
-        /* 2. START SCREEN */
-        #startScreen { height: 100vh; display: flex; align-items: center; justify-content: center; background: #fff; padding: 25px; transition: 0.5s; }
-        .auth-card { width: 100%; max-width: 360px; }
-        .auth-card h1 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
-        .input-group { margin-bottom: 15px; }
-        .input-group label { font-size: 11px; font-weight: 700; color: #86868b; text-transform: uppercase; margin-left: 5px; }
-        input { width: 100%; padding: 16px; border-radius: 14px; border: 1px solid #d2d2d7; background: #f5f5f7; font-size: var(--fs-reg); outline: none; }
-        .btn-black { width: 100%; padding: 16px; background: #000; color: #fff; border: none; border-radius: 14px; font-weight: 600; margin-top: 20px; cursor: pointer; }
-
-        /* 3. MAIN APP */
-        #mainApp { display: none; padding-top: env(safe-area-inset-top); padding-bottom: 120px; }
-        .app-header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 1000; }
+        /* Layout */
         .container { padding: 20px; }
-        .section-header { font-size: 22px; font-weight: 800; margin-bottom: 15px; }
+        .card { background: #fff; padding: 18px; border-radius: 20px; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); cursor: pointer; transition: 0.2s; position: relative; }
+        .card.locked { opacity: 0.6; filter: grayscale(1); cursor: not-allowed; }
+        .card:active { transform: scale(0.98); }
+        
+        .btn { width: 100%; padding: 16px; border-radius: 14px; border: none; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .btn-p { background: var(--p); color: #fff; }
+        .btn-dark { background: #000; color: #fff; }
 
-        /* KARTALAR */
-        .card { background: #fff; padding: 20px; border-radius: 22px; margin-bottom: 15px; box-shadow: var(--card-shadow); transition: 0.3s; position: relative; overflow: hidden; }
-        .card:active { transform: scale(0.96); }
-        .card-icon { width: 40px; height: 40px; background: #f5f5f7; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; font-size: 20px; }
-        .card-title { font-size: var(--fs-reg); font-weight: 700; }
-        .card-subtitle { font-size: var(--fs-tiny); color: #86868b; text-transform: uppercase; font-weight: 600; }
+        /* Modals */
+        .modal { display: none; position: fixed; inset: 0; background: #fff; z-index: 2000; overflow-y: auto; padding: 20px; }
+        .video-wrap { position: relative; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 15px; overflow: hidden; }
+        .video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; }
 
-        /* VIDEO PLAYER MODAL */
-        #videoModal { display: none; position: fixed; inset: 0; background: #000; z-index: 3000; padding: env(safe-area-inset-top) 20px; }
-        .video-box { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 15px; overflow: hidden; margin-top: 20px; }
-        .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-
-        /* NAV BAR */
-        .bottom-nav { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 380px; background: rgba(29, 29, 31, 0.94); backdrop-filter: blur(20px); padding: 8px; border-radius: 26px; display: flex; justify-content: space-around; z-index: 1000; }
-        .nav-link { color: #86868b; text-decoration: none; font-size: 22px; padding: 10px; border-radius: 18px; }
-        .nav-link.active { color: #fff; background: rgba(255,255,255,0.1); }
-
-        /* SIDEBAR */
-        #sidebar { position: fixed; top: 0; left: -100%; width: 85%; max-width: 300px; height: 100%; background: #fff; z-index: 2000; transition: 0.4s; padding: 80px 25px; }
-        #sidebar.active { left: 0; }
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.2); backdrop-filter: blur(4px); display: none; z-index: 1500; }
+        /* Tabs */
+        .nav { position: fixed; bottom: 20px; left: 5%; width: 90%; background: #000; padding: 12px; border-radius: 20px; display: flex; justify-content: space-around; z-index: 1000; }
+        .nav b { color: #888; font-size: 20px; cursor: pointer; }
+        .nav b.active { color: #fff; }
+        
+        /* Admin Section */
+        .admin-input { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; }
     </style>
 </head>
 <body>
 
-<div id="loader">
-    <div class="loader-bar-container"><div class="loader-bar-fill"></div></div>
-    <p style="color:white; font-size:10px; margin-top:15px; letter-spacing:2px;">BILIMCHI YUKLANMOQDA...</p>
+<div id="loader"><div class="bar"><div class="fill"></div></div></div>
+
+<div id="authScreen" class="container" style="padding-top: 100px;">
+    <h1>Bilimchi LMS</h1>
+    <p style="margin-bottom:30px; color:gray;">Ismingizni kiriting:</p>
+    <input type="text" id="uName" class="admin-input" placeholder="Ism">
+    <button class="btn btn-dark" onclick="login()">Kirish</button>
 </div>
 
-<div id="startScreen">
-    <div class="auth-card">
-        <h1>Bilimchi</h1>
-        <p style="color:gray; margin-bottom:30px;">O'rganishni yangi darajaga olib chiqing.</p>
-        <div class="input-group">
-            <label>Ismingiz</label>
-            <input type="text" id="nameInput" placeholder="Masalan: Aziz">
+<div id="app" style="display:none; padding-bottom: 100px;">
+    <div class="container" id="homeTab">
+        <h2 id="greet">Salom!</h2>
+        <div class="card" style="background:var(--p); color:#fff; margin-top:20px;">
+            <p>Sizning darajangiz:</p>
+            <h3 id="userLv">1-bosqich</h3>
         </div>
-        <div class="input-group">
-            <label>Familiyangiz</label>
-            <input type="text" id="surnameInput" placeholder="Masalan: Rahimov">
-        </div>
-        <button class="btn-black" onclick="launchApp()">Boshlash</button>
-    </div>
-</div>
-
-<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-<div id="sidebar">
-    <div style="margin-bottom:40px;">
-        <img id="sideAvatar" src="" style="width:64px; border-radius:20px; background:#eee;">
-        <h2 id="sideName" style="margin-top:15px; font-size:18px;">Ism Familiya</h2>
-        <p id="sideId" style="color:#86868b; font-size:12px;"></p>
-    </div>
-    <div style="display:grid; gap:10px;">
-        <div onclick="switchTab('home', 0)" style="padding:15px; background:#f5f5f7; border-radius:14px; font-weight:600;">🏠 Bosh sahifa</div>
-        <div onclick="switchTab('lessons', 1)" style="padding:15px; border-radius:14px; font-weight:600;">📚 Darsliklar</div>
-        <div onclick="switchTab('premium', 3)" style="padding:15px; color:var(--primary); font-weight:700;">💎 Premium</div>
-    </div>
-</div>
-
-<div id="mainApp">
-    <div class="app-header">
-        <div onclick="toggleMenu()" style="font-size:24px;">⚡</div>
-        <div style="font-weight:800; font-size:16px;">BILIMCHI</div>
-        <div style="font-size:20px;">👤</div>
+        <h3 style="margin: 20px 0 10px;">Darslar:</h3>
+        <div id="lessonsList"></div>
     </div>
 
-    <div id="content">
-        <div id="homeTab" class="tab-content">
-            <div class="container">
-                <h2 class="section-header">Salom, <span id="welcomeUser">O'quvchi</span>! 👋</h2>
-                <div class="card" style="background:#000; color:#fff;">
-                    <p class="card-subtitle" style="color:rgba(255,255,255,0.6);">Reytingingiz</p>
-                    <h2 style="font-size:24px; margin:5px 0;">Top 10% 🏆</h2>
-                </div>
-            </div>
+    <div class="container" id="adminTab" style="display:none;">
+        <h2>Admin Panel</h2>
+        <div class="card">
+            <h4>Yangi dars qo'shish</h4>
+            <input type="text" id="lessonTitle" class="admin-input" placeholder="Dars nomi">
+            <input type="text" id="lessonVid" class="admin-input" placeholder="YouTube Video ID">
+            <input type="text" id="lessonQuiz" class="admin-input" placeholder="Savol|Javob1,Javob2|0">
+            <p style="font-size:10px; color:gray;">Format: Savol|Variant1,Variant2|To'g'riIndex</p>
+            <button class="btn btn-p" onclick="addLesson()">Qo'shish</button>
         </div>
-
-        <div id="lessonsTab" class="tab-content" style="display:none;">
-            <div class="container">
-                <h2 class="section-header">Darsliklar</h2>
-                <div class="card" onclick="openLesson('1-Dars: Kirish va Alifbo', 'ZrxI-Q6oT_c')">
-                    <div class="card-icon">🇷🇺</div>
-                    <p class="card-subtitle" style="color:green;">BEPUL</p>
-                    <h4 class="card-title">1-Dars. Rus tili alifbosi</h4>
-                </div>
-                <div class="card" onclick="alert('Bu dars faqat Premium foydalanuvchilar uchun! 👑')">
-                    <div class="card-icon">🔒</div>
-                    <p class="card-subtitle">PREMIUM</p>
-                    <h4 class="card-title" style="opacity:0.5;">2-Dars. Salomlashish</h4>
-                </div>
-            </div>
-        </div>
-
-        <div id="premiumTab" class="tab-content" style="display:none; text-align:center;">
-            <div class="container">
-                <h1 style="font-size:60px; margin-bottom:20px;">👑</h1>
-                <h2 class="section-header">Premiumga o'ting</h2>
-                <div class="card" style="border:2px solid #000; padding:30px;">
-                    <h3>29 000 UZS</h3>
-                    <p style="color:gray; font-size:12px; margin:10px 0;">Barcha darslar ochiq bo'ladi</p>
-                    <button class="btn-black">Hozir sotib olish</button>
-                </div>
-            </div>
-        </div>
+        <button class="btn btn-dark" onclick="clearProgress()">Progressni tozalash</button>
     </div>
 
-    <div class="bottom-nav">
-        <a href="javascript:void(0)" class="nav-link active" onclick="switchTab('home', 0)">🏠</a>
-        <a href="javascript:void(0)" class="nav-link" onclick="switchTab('lessons', 1)">📚</a>
-        <a href="javascript:void(0)" class="nav-link" onclick="switchTab('premium', 2)">💎</a>
+    <div class="nav">
+        <b onclick="showTab('home')" id="hBtn" class="active">🏠</b>
+        <b onclick="showTab('admin')" id="aBtn">⚙️</b>
     </div>
 </div>
 
-<div id="videoModal">
-    <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:10px; border-bottom:1px solid #333;">
-        <h3 id="lessonTitle" style="color:white; font-size:14px;">Dars</h3>
-        <button onclick="closeLesson()" style="background:#fff; border:none; padding:8px 15px; border-radius:10px; font-weight:bold;">Yopish</button>
+<div id="vModal" class="modal">
+    <button onclick="closeV()" style="float:right; padding:10px;">❌ Yopish</button>
+    <h3 id="vTitle" style="margin-bottom:15px;">Dars</h3>
+    <div class="video-wrap"><iframe id="vFrame" src="" frameborder="0" allowfullscreen></iframe></div>
+    <div id="quizBox" style="margin-top:20px; display:none;">
+        <hr><br>
+        <h4>Dars yuzasidan test:</h4>
+        <div id="qArea"></div>
+        <button class="btn btn-dark" onclick="checkQuiz()">Tekshirish</button>
     </div>
-    <div class="video-box">
-        <iframe id="videoFrame" src="" frameborder="0" allowfullscreen></iframe>
-    </div>
+    <button id="showQuizBtn" class="btn btn-p" onclick="openQuiz()" style="margin-top:20px;">Videoni ko'rdim, testni boshlash</button>
 </div>
 
 <script>
-    let tg = window.Telegram.WebApp;
-    tg.expand();
+    let tg = window.Telegram.WebApp; tg.expand();
+    let lessons = JSON.parse(localStorage.getItem('lms_lessons')) || [
+        {id:1, t:"Rus tili: Alifbo", v:"ZrxI-Q6oT_c", q:"Alifboda nechta harf bor?|33,30,25|0"}
+    ];
+    let progress = localStorage.getItem('lms_progress') || 1;
 
-    window.addEventListener('load', () => {
-        setTimeout(() => { document.getElementById('loader').style.transform = 'translateY(-100%)'; }, 2600);
-    });
+    window.onload = () => { 
+        setTimeout(() => document.getElementById('loader').style.transform = 'translateY(-100%)', 2000);
+        renderLessons();
+    };
 
-    function launchApp() {
-        const name = document.getElementById('nameInput').value.trim();
-        const surname = document.getElementById('surnameInput').value.trim();
-        if(!name || !surname) return alert('Ism-familiyani kiriting!');
-
-        document.getElementById('welcomeUser').innerText = name;
-        document.getElementById('sideName').innerText = name + ' ' + surname;
-        document.getElementById('sideId').innerText = 'ID: ' + Math.floor(100000 + Math.random() * 900000);
-        document.getElementById('sideAvatar').src = `https://ui-avatars.com/api/?name=${name}+${surname}&background=6366f1&color=fff`;
-
-        document.getElementById('startScreen').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
+    function login() {
+        let n = document.getElementById('uName').value;
+        if(!n) return;
+        document.getElementById('greet').innerText = `Salom, ${n}! 👋`;
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
     }
 
-    function switchTab(tabId, index) {
-        document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
-        document.getElementById(tabId + 'Tab').style.display = 'block';
-        const links = document.querySelectorAll('.nav-link');
-        links.forEach(l => l.classList.remove('active'));
-        links[index].classList.add('active');
-        if(document.getElementById('sidebar').classList.contains('active')) toggleMenu();
+    function renderLessons() {
+        let html = '';
+        lessons.forEach(l => {
+            let isLocked = l.id > progress;
+            html += `<div class="card ${isLocked ? 'locked' : ''}" onclick="openL(${l.id})">
+                <b>${l.id}. ${l.t}</b>
+                <span style="float:right">${isLocked ? '🔒' : '▶️'}</span>
+            </div>`;
+        });
+        document.getElementById('lessonsList').innerHTML = html;
+        document.getElementById('userLv').innerText = `${progress}-bosqich o'quvchisi`;
     }
 
-    function toggleMenu() {
-        document.getElementById('sidebar').classList.toggle('active');
-        document.getElementById('overlay').style.display = (document.getElementById('overlay').style.display === 'block') ? 'none' : 'block';
+    let activeL = null;
+    function openL(id) {
+        if(id > progress) return alert("Avvalgi darsni tugating!");
+        activeL = lessons.find(x => x.id == id);
+        document.getElementById('vTitle').innerText = activeL.t;
+        document.getElementById('vFrame').src = `https://www.youtube.com/embed/${activeL.v}`;
+        document.getElementById('vModal').style.display = 'block';
+        document.getElementById('quizBox').style.display = 'none';
+        document.getElementById('showQuizBtn').style.display = 'block';
     }
 
-    function openLesson(title, vidId) {
-        document.getElementById('lessonTitle').innerText = title;
-        document.getElementById('videoFrame').src = `https://www.youtube.com/embed/${vidId}?autoplay=1`;
-        document.getElementById('videoModal').style.display = 'block';
+    function openQuiz() {
+        document.getElementById('showQuizBtn').style.display = 'none';
+        document.getElementById('quizBox').style.display = 'block';
+        let parts = activeL.q.split('|');
+        let opts = parts[1].split(',');
+        let qHtml = `<p><b>${parts[0]}</b></p><br>`;
+        opts.forEach((o, i) => {
+            qHtml += `<label><input type="radio" name="qz" value="${i}"> ${o}</label><br><br>`;
+        });
+        document.getElementById('qArea').innerHTML = qHtml;
     }
 
-    function closeLesson() {
-        document.getElementById('videoFrame').src = "";
-        document.getElementById('videoModal').style.display = 'none';
+    function checkQuiz() {
+        let sel = document.querySelector('input[name="qz"]:checked');
+        if(!sel) return alert("Javobni tanlang!");
+        let correct = activeL.q.split('|')[2];
+        if(sel.value == correct) {
+            alert("To'g'ri! Keyingi dars ochildi.");
+            if(activeL.id == progress) {
+                progress++;
+                localStorage.setItem('lms_progress', progress);
+            }
+            closeV();
+            renderLessons();
+        } else {
+            alert("Xato! Videoni qayta ko'ring.");
+        }
     }
+
+    function closeV() { 
+        document.getElementById('vModal').style.display = 'none'; 
+        document.getElementById('vFrame').src = "";
+    }
+
+    function showTab(t) {
+        document.getElementById('homeTab').style.display = t=='home'?'block':'none';
+        document.getElementById('adminTab').style.display = t=='admin'?'block':'none';
+        document.getElementById('hBtn').className = t=='home'?'active':'';
+        document.getElementById('aBtn').className = t=='admin'?'active':'';
+    }
+
+    function addLesson() {
+        let t = document.getElementById('lessonTitle').value;
+        let v = document.getElementById('lessonVid').value;
+        let q = document.getElementById('lessonQuiz').value;
+        if(!t || !v || !q) return alert("Hammasini to'ldiring!");
+        lessons.push({id: lessons.length + 1, t, v, q});
+        localStorage.setItem('lms_lessons', JSON.stringify(lessons));
+        renderLessons();
+        alert("Dars qo'shildi!");
+    }
+
+    function clearProgress() { localStorage.removeItem('lms_progress'); location.reload(); }
 </script>
 </body>
 </html>
