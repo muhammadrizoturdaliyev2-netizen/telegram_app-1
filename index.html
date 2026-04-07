@@ -5,342 +5,393 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Bilimchi - Elite Edition</title>
     <style>
+        /* CSS O'zgaruvchilari - Ranglar palitrasi */
         :root {
-            /* Qimmatbaho va yumshoq ranglar palitrasi */
-            --primary: #5856d6; /* Royal Soft Blue */
-            --primary-dark: #43419e;
-            --secondary: #af52de; /* Soft Purple */
-            --accent: #ff9500; /* Premium Gold/Orange */
-            --bg-color: #f2f2f7; /* iOS Light Gray */
+            --primary: #4f46e5; /* Indigo - Premium rang */
+            --primary-light: #818cf8;
+            --secondary: #a855f7; /* Purple */
+            --bg-color: #f9fafb;
             --card-bg: #ffffff;
-            --text-main: #1c1c1e;
-            --text-muted: #8e8e93;
-            --glass: rgba(255, 255, 255, 0.8);
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            /* Premium ranglar (Qora emas, balki to'q binafsha) */
+            --dark-premium: #1e1b4b; /* To'q Indigo */
+            --dark-premium-hover: #312e81;
             
-            /* Shrift o'lchamlari */
-            --fs-tiny: 11px;
-            --fs-sm: 13px;
-            --fs-base: 14px;
-            --fs-title: 18px;
+            --premium-bg: #fffbeb;
+            --premium-border: #fde047;
+            --premium-text: #b45309;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
 
-        * { 
-            margin: 0; padding: 0; box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
-            letter-spacing: -0.3px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        
+        body { background: var(--bg-color); color: var(--text-main); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
-        body { 
-            background: var(--bg-color); 
-            color: var(--text-main); 
-            overflow-x: hidden;
-            width: 100vw; height: 100vh;
-        }
-
-        /* 1. LOADER - Matn ko'rinishi yaxshilandi */
+        /* LOADER */
         #loader {
-            position: fixed; inset: 0;
-            background: url('loading.jpg') center/cover no-repeat;
-            display: flex; flex-direction: column; justify-content: flex-end;
-            padding-bottom: 100px; align-items: center;
-            z-index: 9999; transition: 0.8s cubic-bezier(0.8, 0, 0.2, 1);
+            position: fixed; width: 100%; height: 100%; background: #ffffff;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 2000; transition: opacity 0.5s;
         }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        .loader-bar-container {
-            width: 180px; height: 3px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px; overflow: hidden;
-            position: relative;
-        }
-
-        .loader-bar-fill {
-            width: 0%; height: 100%;
-            background: #ffffff;
-            box-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
-            animation: fillProgress 2.8s ease-in-out forwards;
-        }
-
-        @keyframes fillProgress { 
-            0% { width: 0%; } 100% { width: 100%; } 
-        }
-
-        .loader-text {
-            color: #ffffff; 
-            font-size: 12px; 
-            font-weight: 700;
-            margin-top: 18px; 
-            text-transform: uppercase; 
-            letter-spacing: 2.5px;
-            /* Matn ko'rinishi uchun soya qo'shildi */
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 1px 2px rgba(0, 0, 0, 0.5);
-            background: rgba(0, 0, 0, 0.1);
-            padding: 4px 12px;
-            border-radius: 20px;
-        }
-
-        /* 2. START SCREEN - Yumshoq rangli tugmalar */
+        /* START SCREEN */
         #startScreen {
-            height: 100vh; display: flex; align-items: center; justify-content: center;
-            background: #fff; padding: 30px;
-        }
-
-        .auth-card { width: 100%; max-width: 340px; }
-        .auth-card h1 { font-size: 26px; font-weight: 800; margin-bottom: 10px; color: var(--text-main); }
-        .auth-card p { font-size: var(--fs-base); color: var(--text-muted); margin-bottom: 35px; }
-
-        .input-group { margin-bottom: 18px; }
-        .input-group label { font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-left: 4px; display: block; margin-bottom: 6px; }
-
-        input {
-            width: 100%; padding: 15px; border-radius: 14px;
-            border: 1px solid #e5e5ea; background: #f2f2f7;
-            font-size: var(--fs-base); outline: none; transition: 0.3s;
-        }
-        input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(88, 86, 214, 0.1); }
-
-        /* YUMSHOQ PREMIUM TUGMA */
-        .btn-premium {
-            width: 100%; padding: 16px; 
+            height: 100vh; display: flex; justify-content: center; align-items: center;
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: #fff; border: none; border-radius: 16px; 
-            font-weight: 700; font-size: 15px;
-            margin-top: 20px; cursor: pointer; transition: 0.3s;
-            box-shadow: 0 8px 20px rgba(88, 86, 214, 0.25);
         }
-        .btn-premium:active { transform: scale(0.96); opacity: 0.9; }
+        .login-card { background: white; padding: 40px; border-radius: 28px; width: 90%; max-width: 420px; text-align: center; box-shadow: var(--shadow-lg); }
+        .login-card h2 { font-size: 28px; font-weight: 800; color: var(--text-main); }
+        .login-card p { color: var(--text-muted); font-size: 15px; margin-top: 8px; margin-bottom: 30px; }
+        input { width: 100%; padding: 16px; margin: 12px 0; border: 1px solid #e5e7eb; border-radius: 16px; outline: none; font-size: 16px; background: #f9fafb; transition: border-color 0.2s; }
+        input:focus { border-color: var(--primary-light); background: white; }
+        
+        /* PREMIUM TUGMA (Qora emas, To'q Indigo) */
+        .start-btn { width: 100%; padding: 16px; border: none; border-radius: 16px; background: var(--dark-premium); color: white; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.2s, transform 0.1s; margin-top: 20px; box-shadow: 0 4px 6px -1px rgba(30, 27, 75, 0.3); }
+        .start-btn:hover { background: var(--dark-premium-hover); }
+        .start-btn:active { transform: scale(0.97); }
 
-        /* 3. MAIN APP */
-        #mainApp { display: none; padding-top: env(safe-area-inset-top); }
+        /* MAIN APP */
+        #mainApp { display: none; padding-bottom: 110px; opacity: 0; transition: opacity 0.5s; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #f3f4f6; }
+        .header-title { font-weight: 800; font-size: 20px; color: var(--primary); letter-spacing: -0.5px; }
+        .icon-btn { font-size: 24px; cursor: pointer; color: var(--text-main); background: none; border: none; }
 
-        .app-header {
-            padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255,255,255,0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            position: sticky; top: 0; z-index: 1000; border-bottom: 0.5px solid #e5e5ea;
-        }
-
+        /* CONTENT BOXES */
         .container { padding: 20px; }
-        .section-header { font-size: 22px; font-weight: 800; margin-bottom: 18px; letter-spacing: -0.6px; }
+        h3.section-title { font-size: 22px; font-weight: 800; margin-bottom: 16px; color: var(--text-main); letter-spacing: -0.5px; }
+        .section-subtitle { font-size: 15px; color: var(--text-muted); margin-top: -12px; margin-bottom: 24px; }
+        
+        .card { background: var(--card-bg); padding: 24px; border-radius: 24px; margin-bottom: 16px; box-shadow: var(--shadow-sm); transition: 0.3s, transform 0.1s ease; cursor: pointer; position: relative; overflow: hidden; border: 1px solid #f3f4f6; }
+        .card:hover { box-shadow: var(--shadow-md); }
+        .card:active { transform: scale(0.97); }
+        .card-title { font-size: 17px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
+        .card-desc { font-size: 13px; color: var(--text-muted); }
 
-        .card {
-            background: var(--card-bg); padding: 20px; border-radius: 22px; margin-bottom: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #f2f2f7;
-            transition: 0.3s cubic-bezier(0.2, 0, 0.2, 1);
+        /* SPECIAL CARDS */
+        .card-stat { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.2); }
+        .card-stat h4 { font-weight: 800; font-size: 18px; }
+        .card-stat .card-desc { color: rgba(255, 255, 255, 0.8); }
+        .progress-bar { width: 100%; background: rgba(255,255,255,0.2); height: 10px; border-radius: 6px; margin-top: 16px; }
+        .progress-fill { background: white; height: 100%; border-radius: 6px; position: relative; overflow: hidden; }
+
+        /* BADGES */
+        .badge { font-size: 11px; padding: 5px 10px; border-radius: 8px; font-weight: 700; display: inline-block; margin-top: 8px; }
+        .badge-free { background: #dcfce7; color: #166534; }
+        .badge-premium { background: var(--premium-bg); color: var(--premium-text); }
+        
+        .lock-icon { position: absolute; top: 18px; right: 20px; font-size: 20px; color: #d1d5db; }
+
+        /* GRID SYSTEM */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        .grid-2 .card { margin-bottom: 0; height: 100px; display: flex; flex-direction: column; justify-content: center; }
+
+        /* NAVIGATION (Qora emas, To'q Indigo) */
+        .nav-bar {
+            position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+            width: 92%; max-width: 460px; background: rgba(30, 27, 75, 0.95); /* To'q Indigo Glassmorphism */
+            backdrop-filter: blur(12px); border-radius: 28px;
+            display: flex; justify-content: space-around; padding: 12px;
+            box-shadow: 0 12px 20px -5px rgba(0,0,0,0.2); z-index: 1000;
         }
-        .card:active { transform: scale(0.97); background: #fafafa; }
-
-        .card-icon { width: 36px; height: 36px; background: #f2f2f7; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; font-size: 18px; }
-        .card-title { font-size: 15px; font-weight: 700; color: var(--text-main); }
-        .card-subtitle { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.8px; margin-bottom: 4px; }
-
-        /* NAV BAR - Soft Dark Glass */
-        .bottom-nav {
-            position: fixed; bottom: calc(15px + env(safe-area-inset-bottom));
-            left: 50%; transform: translateX(-50%); width: 90%; max-width: 360px;
-            background: rgba(28, 28, 30, 0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            padding: 8px; border-radius: 24px; display: flex; justify-content: space-around;
-            z-index: 1000; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-        }
-        .nav-link { 
-            color: #8e8e93; text-decoration: none; font-size: 20px; 
-            padding: 10px 18px; border-radius: 16px; transition: 0.3s;
-        }
-        .nav-link.active { color: #ffffff; background: rgba(255,255,255,0.12); }
-
-        /* PREMIUM SECTORS */
-        .premium-card { background: #fffdf5; border: 1px solid #fef3c7; }
-        .badge-vip { background: var(--accent); color: #fff; font-size: 9px; padding: 2px 8px; border-radius: 6px; font-weight: 800; }
+        .nav-item { font-size: 26px; cursor: pointer; transition: 0.3s ease; position: relative; padding: 8px; border-radius: 16px; color: #94a3b8; /* Kulrang */ }
+        .nav-item.active { color: white; background: rgba(255,255,255,0.1); }
+        .nav-item.active::after { content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; background: white; border-radius: 50%; }
 
         /* SIDEBAR */
         #sidebar {
-            position: fixed; top: 0; left: -100%; width: 280px; height: 100%;
-            background: #fff; z-index: 2000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 70px 24px;
+            position: fixed; left: -280px; top: 0; width: 290px; height: 100%;
+            background: white; z-index: 1500; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding: 40px 24px;
+            box-shadow: 10px 0 20px -5px rgba(0,0,0,0.05); overflow-y: auto;
         }
-        #sidebar.active { left: 0; }
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.15); backdrop-filter: blur(3px); display: none; z-index: 1500; }
+        #sidebar.active { transform: translateX(280px); }
+        .overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); display:none; z-index:1400; opacity: 0; transition: opacity 0.3s; }
+        .overlay.active { display:block; opacity: 1; }
+        
+        .sidebar-header { text-align: center; margin-bottom: 40px; }
+        .user-avatar-lg { width: 90px; height: 90px; border-radius: 50%; margin-bottom: 12px; border: 4px solid #eef2ff; box-shadow: var(--shadow-sm); }
+        .user-name { font-weight: 800; font-size: 19px; color: var(--text-main); }
+        .user-id { font-size: 13px; color: var(--text-muted); font-family: monospace; background: #f3f4f6; padding: 2px 6px; border-radius: 4px; margin-top: 4px; display: inline-block; }
+        
+        .sidebar-menu { display: flex; flex-direction: column; gap: 8px; }
+        .menu-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 12px; color: var(--text-main); font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .menu-item:hover { background: #f9fafb; }
+        .menu-item.active { background: #eef2ff; color: var(--primary); }
+        .menu-icon { font-size: 20px; width: 24px; text-align: center; }
 
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        /* GAME STYLES */
+        .premium-card { background: var(--premium-bg); border: 1px solid var(--premium-border); }
+        .premium-card .card-title { color: var(--premium-text); }
+        .premium-card .card-desc { color: #d97706; opacity: 0.9; }
+
+        /* PREMIUM TAB */
+        .premium-header { padding: 40px 20px; text-align: center; background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-radius: 28px; margin-bottom: 24px; border: 1px solid var(--premium-border); }
+        .premium-header h2 { font-size: 60px; margin-bottom: 10px; }
+        .premium-header h3 { font-size: 22px; font-weight: 800; color: var(--premium-text); }
+        .premium-header p { color: var(--premium-text); font-size: 15px; margin-top: 6px; opacity: 0.8; }
+        .plan-card { text-align: center; padding: 30px; border: 2px solid var(--primary); background: #f5f3ff; }
+        .plan-price { font-size: 36px; font-weight: 800; color: var(--primary); margin: 12px 0; }
+        
+        /* UTIL */
+        .tab-content { display: none; }
+        .tab-content.active-tab { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
     </style>
 </head>
 <body>
 
 <div id="loader">
-    <div class="loader-bar-container">
-        <div class="loader-bar-fill"></div>
-    </div>
-    <p class="loader-text">Bilimchi yuklanmoqda</p>
+    <div class="spinner"></div>
+    <p style="margin-top: 18px; color: var(--primary); font-weight: 600; font-size: 15px;">Bilimchi</p>
 </div>
 
 <div id="startScreen">
-    <div class="auth-card">
-        <h1>Xush kelibsiz</h1>
-        <p>Bilimlar olami sizni kutmoqda.</p>
-        
-        <div class="input-group">
-            <label>Ism</label>
-            <input type="text" id="nameInput" placeholder="Ismingizni yozing">
-        </div>
-        <div class="input-group">
-            <label>Familiya</label>
-            <input type="text" id="surnameInput" placeholder="Familiyangizni yozing">
-        </div>
-        
-        <button class="btn-premium" onclick="launchApp()">Davom etish</button>
+    <div class="login-card">
+        <h2>Xush kelibsiz!</h2>
+        <p>Profilingizni yarating va boshlang.</p>
+        <input type="text" id="userNameInput" placeholder="Ismingiz">
+        <input type="text" id="userSurnameInput" placeholder="Familiyangiz">
+        <button class="start-btn" onclick="handleStart()">Boshlash</button>
     </div>
 </div>
 
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 <div id="sidebar">
-    <div style="margin-bottom: 35px; text-align: center;">
-        <img id="sideAvatar" src="" style="width:75px; border-radius:24px; box-shadow: 0 8px 15px rgba(0,0,0,0.1);">
-        <h3 id="sideName" style="margin-top:15px; font-size:17px; font-weight:800;">Foydalanuvchi</h3>
-        <p id="sideId" style="color:var(--text-muted); font-size:11px; margin-top:4px; font-family:monospace;"></p>
+    <div class="sidebar-header">
+        <img id="userAvatar" src="" class="user-avatar-lg" alt="User Avatar">
+        <div id="displayFullName" class="user-name">Foydalanuvchi</div>
+        <div id="displayID" class="user-id"></div>
     </div>
-    <div style="display:grid; gap:8px;">
-        <div onclick="switchTab('home', 0)" style="padding:14px; background:#f2f2f7; border-radius:14px; font-weight:700; color:var(--primary);">🏠 Bosh sahifa</div>
-        <div onclick="switchTab('lessons', 1)" style="padding:14px; border-radius:14px; font-weight:600;">📚 Kurslar</div>
-        <div onclick="switchTab('games', 2)" style="padding:14px; border-radius:14px; font-weight:600;">🎮 Duel Markazi</div>
-        <div onclick="switchTab('premium', 3)" style="padding:14px; border-radius:14px; font-weight:600; color:var(--accent);">💎 Premium Obuna</div>
+    <div class="sidebar-menu">
+        <div class="menu-item active" onclick="showTab('home', this, 0)">
+            <span class="menu-icon">🏠</span>Asosiy sahifa
+        </div>
+        <div class="menu-item" onclick="showTab('lessons', this, 1)">
+            <span class="menu-icon">📚</span>Mening kurslarim
+        </div>
+        <div class="menu-item" onclick="showTab('games', this, 2)">
+            <span class="menu-icon">🎮</span>O'yinlar olami
+        </div>
+        <div class="menu-item" onclick="showTab('premium', this, 3)">
+            <span class="menu-icon">💎</span>Premium obuna
+        </div>
+        <hr style="border: none; border-top: 1px solid #f3f4f6; margin: 16px 0;">
+        <div class="menu-item" style="color: var(--danger);">
+            <span class="menu-icon">🚪</span>Chiqish
+        </div>
     </div>
 </div>
 
 <div id="mainApp">
-    <div class="app-header">
-        <div onclick="toggleMenu()" style="font-size:22px; cursor:pointer; color:var(--primary);">🔳</div>
-        <div style="font-weight:900; font-size:15px; letter-spacing: 1px; color: var(--primary);">BILIMCHI</div>
-        <div style="font-size:18px; color:var(--text-muted);">🔔</div>
+    <div class="header">
+        <button class="icon-btn" onclick="toggleMenu()">☰</button>
+        <div class="header-title">Bilimchi</div>
+        <button class="icon-btn">🔔</button>
     </div>
 
     <div id="content">
-        <div id="homeTab" class="tab-content">
+        <div id="homeTab" class="tab-content active-tab">
             <div class="container">
-                <h2 class="section-header">Salom, <span id="welcomeUser">O'quvchi</span>! ✨</h2>
+                <h3 class="section-title">Salom, <span id="welcomeName">O'quvchi</span>! 👋</h3>
+                <p class="section-subtitle">Bugun yangi marralarni zabt etamiz!</p>
                 
-                <div class="card" style="background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); border:none; color:#fff;">
-                    <p class="card-subtitle" style="color:rgba(255,255,255,0.7);">Haftalik natija</p>
-                    <h3 style="font-size:22px;">A’lo daraja ⚡</h3>
-                    <div style="width:100%; background:rgba(255,255,255,0.2); height:5px; border-radius:10px; margin-top:15px;">
-                        <div style="width:80%; background:#fff; height:100%; border-radius:10px;"></div>
+                <div class="card card-stat">
+                    <h4>Haftalik taraqqiyot</h4>
+                    <p class="card-desc">Siz boshqalarga qaraganda 85% faolroqsiz!</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 85%;"></div>
                     </div>
                 </div>
 
                 <div class="grid-2">
-                    <div class="card" onclick="switchTab('lessons', 1)">
-                        <div class="card-icon">📘</div>
-                        <p class="card-subtitle">O'rganish</p>
-                        <h4 class="card-title">Darslar</h4>
+                    <div class="card" onclick="showTab('lessons', null, 1)">
+                        <div style="font-size: 28px; margin-bottom: 8px;">📚</div>
+                        <div class="card-title">Darslar</div>
                     </div>
-                    <div class="card" onclick="switchTab('games', 2)">
-                        <div class="card-icon">⚔️</div>
-                        <p class="card-subtitle">Raqobat</p>
-                        <h4 class="card-title">O'yinlar</h4>
+                    <div class="card" onclick="showTab('games', null, 2)">
+                        <div style="font-size: 28px; margin-bottom: 8px;">🎮</div>
+                        <div class="card-title">O'yinlar</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="lessonsTab" class="tab-content" style="display:none;">
+        <div id="lessonsTab" class="tab-content">
             <div class="container">
-                <h2 class="section-header">Mavjud Kurslar</h2>
-                <div class="card" onclick="alert('Kurs yuklanmoqda...')">
-                    <p class="card-subtitle">Xorijiy tillar</p>
-                    <h4 class="card-title">🇷🇺 Rus tili (Grammatika)</h4>
-                </div>
-                <div class="card" onclick="alert('Kurs yuklanmoqda...')">
-                    <p class="card-subtitle">Xorijiy tillar</p>
-                    <h4 class="card-title">🇺🇸 Ingliz tili (Speaking)</h4>
-                </div>
-            </div>
-        </div>
-
-        <div id="gamesTab" class="tab-content" style="display:none;">
-            <div class="container">
-                <h2 class="section-header">O'yinlar Olami</h2>
-                <div class="card">
-                    <p class="card-subtitle">Bepul o'yin</p>
-                    <h4 class="card-title">Mavzuli Testlar</h4>
-                </div>
-
-                <div class="card premium-card" onclick="switchTab('premium', 3)">
-                    <div style="display:flex; justify-content:space-between;">
-                        <div>
-                            <p class="card-subtitle" style="color:var(--accent);">Premium Rejim</p>
-                            <h4 class="card-title">Duel 1vs1 & Jamoaviy</h4>
-                        </div>
-                        <span class="badge-vip">PREMIUM</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="premiumTab" class="tab-content" style="display:none;">
-            <div class="container" style="text-align:center; padding-top:40px;">
-                <h1 style="font-size:45px; margin-bottom:15px;">💎</h1>
-                <h2 class="section-header">Elite Clubga qo'shiling</h2>
-                <p style="color:var(--text-muted); font-size:14px; line-height:1.6;">Barcha yopiq kurslar, 1vs1 duellar va maxsus sovrinlar faqat Premium a'zolar uchun.</p>
+                <h3 class="section-title">📚 Kurslar</h3>
+                <p class="section-subtitle">O'zingizga ma'qul yo'nalishni tanlang</p>
                 
-                <div class="card" style="margin-top:35px; padding:35px; border:1px solid var(--primary);">
-                    <p class="card-subtitle">Oylik kirish</p>
-                    <h1 style="font-size:32px; color:var(--primary); margin:12px 0;">29 000 UZS</h1>
-                    <button class="btn-premium">Faollashtirish</button>
+                <div class="card" onclick="alert('Dars yuklanmoqda...')">
+                    <div class="card-title">🇷🇺 Rus tili (Boshlang'ich)</div>
+                    <div class="card-desc">12 ta video dars • 4 soat</div>
+                </div>
+                <div class="card" onclick="alert('Dars yuklanmoqda...')">
+                    <div class="card-title">🇺🇸 Ingliz tili (Grammatika)</div>
+                    <div class="card-desc">8 ta video dars • 3 soat</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="gamesTab" class="tab-content">
+            <div class="container">
+                <h3 class="section-title">🎮 O'yinlar markazi</h3>
+                <p class="section-subtitle">Bilimingizni tezkor janglarda sinab ko'ring</p>
+
+                <div class="card" style="border-left: 5px solid var(--success);">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                            <h4 class="card-title" style="color: #166534;">📝 Oddiy Quiz</h4>
+                            <p class="card-desc">Hamma uchun ochiq, cheksiz testlar</p>
+                        </div>
+                        <span class="badge badge-free">BEPUL</span>
+                    </div>
+                </div>
+
+                <p style="margin: 28px 0 12px; font-weight: 800; font-size: 15px; color: var(--text-muted); text-transform: uppercase;">💎 Premium Duellar</p>
+
+                <div class="card premium-card" onclick="checkPremium('Duel 1vs1')">
+                    <div style="display: flex; justify-content: space-between;">
+                        <div>
+                            <h4 class="card-title">⚔️ Duel 1vs1</h4>
+                            <p class="card-desc">Tasodifiy raqib bilan real vaqtda</p>
+                        </div>
+                        <span style="font-size: 18px;">👑</span>
+                    </div>
+                </div>
+
+                <div class="card premium-card" onclick="checkPremium('Jamoaviy 2vs2')">
+                    <span class="lock-icon">🔒</span>
+                    <h4 class="card-title">👥 Jamoaviy 2vs2</h4>
+                    <p class="card-desc">Sherigingiz bilan bir jamoada</p>
+                </div>
+
+                <div class="card premium-card" onclick="checkPremium('Klanlar jangi 4vs4')">
+                    <span class="lock-icon">🔒</span>
+                    <h4 class="card-title">🔥 Klanlar jangi 4vs4</h4>
+                    <p class="card-desc">Katta jamoalar strategiyasi poygasi</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="premiumTab" class="tab-content">
+            <div class="container">
+                <div class="premium-header">
+                    <h2>💎</h2>
+                    <h3>Premium Imkoniyatlar</h3>
+                    <p>Barcha duellar, reklamasisiz darslar va maxsus kontent faqat siz uchun.</p>
+                </div>
+                
+                <div class="card plan-card">
+                    <h4>Oylik obuna</h4>
+                    <h2 class="plan-price">29 000 so'm</h2>
+                    <button class="start-btn" style="margin-top: 10px;">Faollashtirish</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="bottom-nav">
-        <a href="#" class="nav-link active" onclick="switchTab('home', 0)">🏠</a>
-        <a href="#" class="nav-link" onclick="switchTab('lessons', 1)">📚</a>
-        <a href="#" class="nav-link" onclick="switchTab('games', 2)">⚔️</a>
-        <a href="#" class="nav-link" onclick="switchTab('premium', 3)">💎</a>
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="showTab('home', null, 0)">🏠</div>
+        <div class="nav-item" onclick="showTab('lessons', null, 1)">📚</div>
+        <div class="nav-item" onclick="showTab('games', null, 2)">🎮</div>
+        <div class="nav-item" onclick="showTab('premium', null, 3)">💎</div>
     </div>
 </div>
 
 <script>
-    // 1. Loader Logic
-    window.addEventListener('load', () => {
+    // PAGE LOAD HANDLING
+    window.onload = () => {
+        const loader = document.getElementById('loader');
         setTimeout(() => {
-            const loader = document.getElementById('loader');
             loader.style.opacity = '0';
-            setTimeout(() => loader.style.display = 'none', 800);
-        }, 3000);
-    });
+            setTimeout(() => loader.style.display = 'none', 500);
+        }, 1500);
+    };
 
-    // 2. Launch
-    function launchApp() {
-        const name = document.getElementById('nameInput').value.trim();
-        const surname = document.getElementById('surnameInput').value.trim();
-        if(!name || !surname) { alert('Ism va familiyangizni kiriting!'); return; }
+    // HANDLE APP START
+    function handleStart() {
+        const nameInput = document.getElementById('userNameInput');
+        const surnameInput = document.getElementById('userSurnameInput');
+        const name = nameInput.value.trim();
+        const surname = surnameInput.value.trim();
 
-        document.getElementById('welcomeUser').innerText = name;
-        document.getElementById('sideName').innerText = name + ' ' + surname;
-        document.getElementById('sideId').innerText = 'ID: ' + Math.floor(100000 + Math.random() * 900000);
-        document.getElementById('sideAvatar').src = `https://ui-avatars.com/api/?name=${name}+${surname}&background=5856d6&color=fff&bold=true&size=128`;
+        if(!name || !surname) {
+            alert("Ism va familiyangizni kiriting!");
+            return;
+        }
 
+        // Set user info dynamically
+        document.getElementById('welcomeName').innerText = name;
+        document.getElementById('displayFullName').innerText = name + " " + surname;
+        const randomID = Math.floor(100000 + Math.random() * 900000);
+        document.getElementById('displayID').innerText = "ID: " + randomID;
+        document.getElementById('userAvatar').src = `https://ui-avatars.com/api/?name=${name}+${surname}&background=4f46e5&color=fff&size=128&bold=true`;
+
+        // Screen transition
         document.getElementById('startScreen').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
+        const mainApp = document.getElementById('mainApp');
+        mainApp.style.display = 'block';
+        setTimeout(() => mainApp.style.opacity = '1', 10);
     }
 
-    // 3. Navigation
-    function switchTab(tabId, index) {
+    // NAVIGATION SYSTEM
+    function showTab(tabName, clickedMenuItem, navIndex) {
+        // 1. Hide all tab contents
         const tabs = document.querySelectorAll('.tab-content');
-        tabs.forEach(t => t.style.display = 'none');
-        document.getElementById(tabId + 'Tab').style.display = 'block';
-        
-        const links = document.querySelectorAll('.nav-link');
-        links.forEach(l => l.classList.remove('active'));
-        links[index].classList.add('active');
+        tabs.forEach(tab => tab.classList.remove('active-tab'));
 
-        if(document.getElementById('sidebar').classList.contains('active')) toggleMenu();
-        window.scrollTo({top: 0, behavior: 'smooth'});
+        // 2. Show selected tab content
+        document.getElementById(tabName + 'Tab').classList.add('active-tab');
+
+        // 3. Update Bottom Nav UI
+        const navItems = document.querySelectorAll('.nav-bar .nav-item');
+        navItems.forEach(item => item.classList.remove('active'));
+        if (typeof navIndex === 'number') {
+            navItems[navIndex].classList.add('active');
+        }
+
+        // 4. Update Sidebar UI
+        const menuItems = document.querySelectorAll('.sidebar-menu .menu-item');
+        menuItems.forEach(item => item.classList.remove('active'));
+        
+        if (clickedMenuItem) {
+            clickedMenuItem.classList.add('active');
+        } else {
+            // Find sidebar item based on tabName
+            menuItems.forEach(item => {
+                if (item.getAttribute('onclick') && item.getAttribute('onclick').includes(`'${tabName}'`)) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        // 5. Auto-close sidebar
+        const sidebar = document.getElementById('sidebar');
+        if(sidebar.classList.contains('active')) toggleMenu();
+        
+        // 6. Scroll to top
+        window.scrollTo(0, 0);
     }
 
-    // 4. Sidebar
+    // SIDEBAR & OVERLAY TOGGLE
     function toggleMenu() {
         document.getElementById('sidebar').classList.toggle('active');
-        const overlay = document.getElementById('overlay');
-        overlay.style.display = (overlay.style.display === 'block') ? 'none' : 'block';
+        document.getElementById('overlay').classList.toggle('active');
+    }
+
+    // PREMIUM ACCESS CHECKER
+    function checkPremium(modeName) {
+        alert(`${modeName} rejimi faqat Premium foydalanuvchilar uchun! 💎`);
+        // Go to Premium Tab (Index 3)
+        showTab('premium', null, 3);
     }
 </script>
 
