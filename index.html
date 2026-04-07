@@ -141,7 +141,7 @@ body{
   border-bottom:1px solid #eee;
 }
 
-/* QUICK BUTTONS */
+/* QUICK */
 .quick{
   display:flex;
   gap:12px;
@@ -157,9 +157,6 @@ body{
   display:flex;
   justify-content:center;
   align-items:center;
-  font-weight:600;
-  box-shadow:0 10px 25px rgba(99,102,241,0.4);
-  transition:0.2s;
 }
 
 .column{
@@ -177,11 +174,6 @@ body{
   display:flex;
   justify-content:center;
   align-items:center;
-  transition:0.2s;
-}
-
-.big:active, .small:active{
-  transform:scale(0.95);
 }
 
 /* CARD */
@@ -206,7 +198,6 @@ body{
   text-align:center;
   background:linear-gradient(135deg,#f59e0b,#fbbf24);
   color:white;
-  font-weight:600;
 }
 
 /* NAV */
@@ -221,16 +212,10 @@ body{
   display:flex;
   justify-content:space-around;
   padding:18px;
-  box-shadow:0 15px 40px rgba(0,0,0,0.12);
 }
 
 .nav div{
   font-size:22px;
-  transition:0.2s;
-}
-
-.nav div:active{
-  transform:scale(1.3);
 }
 </style>
 </head>
@@ -245,7 +230,9 @@ body{
     <p>Iltimos kuting...</p>
     <div class="circle"></div>
   </div>
-</div><!-- START -->
+</div>
+
+<!-- START -->
 <div class="start" id="start">
   <div class="start-box">
     <h2>Xush kelibsiz 👋</h2>
@@ -253,9 +240,7 @@ body{
     <input id="surnameInput" placeholder="Familiyangiz">
     <button onclick="startApp(event)">Boshlash</button>
   </div>
-</div>
-
-<!-- OVERLAY -->
+</div><!-- OVERLAY -->
 <div class="overlay" id="overlay" onclick="closeMenu()"></div>
 
 <!-- SIDEBAR -->
@@ -267,7 +252,7 @@ body{
   </div>
 
   <div class="menu-item">🎮 O‘yinlar</div>
-  <div class="menu-item">📝 Testlar</div>
+  <div class="menu-item">📚 Darslar</div>
   <div class="menu-item">💎 Premium</div>
 </div>
 
@@ -280,20 +265,19 @@ body{
   <div>🔔</div>
 </div>
 
+<!-- HOME -->
 <div id="homeScreen">
 
   <div class="quick">
     <div class="big" onclick="show('games')">🎮 O‘yinlar</div>
 
     <div class="column">
-      <div class="small" onclick="show('tests')">📝 Testlar</div>
+      <div class="small" onclick="show('lesson')">📚 Darslar</div>
       <div class="small" onclick="show('results')">🏆 Natija</div>
     </div>
   </div>
 
-  <div class="card">
-    🌟 Juda yaxshi! davom eting
-  </div>
+  <div class="card">🌟 Juda yaxshi! davom eting</div>
 
   <div class="card premium">
     💎 Premium orqali barcha imkoniyatlardan foydalanishingiz mumkin
@@ -305,15 +289,29 @@ body{
 
 </div>
 
+<!-- DARS -->
+<div id="lessonScreen" style="display:none;padding:20px;">
+  <h2>📚 Darslar</h2>
+
+  <div class="card" onclick="openLesson('html')">HTML asoslari</div>
+  <div class="card" onclick="openLesson('css')">CSS asoslari</div>
+</div>
+
+<div id="lessonView" style="display:none;padding:20px;">
+  <h2 id="lessonTitle"></h2>
+  <p id="lessonText"></p>
+</div>
+
+<!-- SCREENS -->
 <div id="gamesScreen" style="display:none;padding:20px;">🎮 O‘yinlar</div>
-<div id="testsScreen" style="display:none;padding:20px;">📝 Testlar</div>
 <div id="resultsScreen" style="display:none;padding:20px;">🏆 Natijalar</div>
 <div id="premiumScreen" style="display:none;padding:20px;">💎 Premium</div>
 
+<!-- NAV -->
 <div class="nav">
   <div onclick="show('home')">🏠</div>
   <div onclick="show('games')">🎮</div>
-  <div onclick="show('tests')">📝</div>
+  <div onclick="show('lesson')">📚</div>
   <div onclick="show('results')">🏆</div>
   <div onclick="show('premium')">💎</div>
 </div>
@@ -328,16 +326,15 @@ setTimeout(()=>{
 },3000);
 
 function startApp(e){
-  let name = nameInput.value;
-  let surname = surnameInput.value;
+  let name=nameInput.value;
+  let surname=surnameInput.value;
 
-  if(!name || !surname){ alert("Ism kiriting"); return; }
+  if(!name||!surname){alert("Ism kiriting");return;}
 
   e.target.innerHTML='<div class="mini-loader"></div>';
 
   setTimeout(()=>{
     let id=Math.floor(Math.random()*100000);
-
     username.innerText=name+" "+surname;
     userid.innerText="ID: "+id;
     avatar.src="https://ui-avatars.com/api/?name="+name+"+"+surname;
@@ -360,11 +357,27 @@ function closeMenu(){
 function show(screen){
   homeScreen.style.display="none";
   gamesScreen.style.display="none";
-  testsScreen.style.display="none";
+  lessonScreen.style.display="none";
+  lessonView.style.display="none";
   resultsScreen.style.display="none";
   premiumScreen.style.display="none";
 
   document.getElementById(screen+"Screen").style.display="block";
+}
+
+function openLesson(type){
+  lessonScreen.style.display="none";
+  lessonView.style.display="block";
+
+  if(type==="html"){
+    lessonTitle.innerText="HTML asoslari";
+    lessonText.innerText="HTML bu web sahifa yaratish uchun ishlatiladi...";
+  }
+
+  if(type==="css"){
+    lessonTitle.innerText="CSS asoslari";
+    lessonText.innerText="CSS bu dizayn berish uchun ishlatiladi...";
+  }
 }
 
 </script>
